@@ -125,18 +125,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.sites",
     "django.contrib.staticfiles",
-    
+
     # theme
     "bootstrapform",
     "pinax_theme_bootstrap",
-    
+
     # external
     "account",
     "eventlog",
     "metron",
-    
+    "easy_thumbnails",
+
     # project
     "project_name",
+    "project_name.profiles",
 ]
 
 # A sample logging configuration. The only tangible logging
@@ -186,3 +188,5 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
 ]
+
+AUTH_PROFILE_MODULE = "profiles.Profile"
