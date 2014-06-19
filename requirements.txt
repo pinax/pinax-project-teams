@@ -7,3 +7,5 @@ django-jsonfield==0.9.12
 markdown==2.4.1
 Pillow==2.3.0
 easy-thumbnails==1.4
+
+django-reversion==1.7

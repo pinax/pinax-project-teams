@@ -139,6 +139,7 @@ INSTALLED_APPS = [
     # project
     "project_name",
     "project_name.profiles",
+    "project_name.teams",
 ]
 
 # A sample logging configuration. The only tangible logging
