@@ -1,0 +1,69 @@
+{% extends "site_base.html" %}
+
+{% block head_title %}{{ profile.display_name }}{% endblock %}
+
+{% load thumbnail %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="profile-widget">
+                {% if profile.avatar %}
+                    <img class="img-polaroid avatar hidden-phone" src="{% thumbnail profile.avatar 160x160 crop %}" alt="{{ profile.name }}">
+                {% endif %}
+
+                <h2>{{ profile.display_name }}</h2>
+
+                <div class="profile">
+                    {% if profile.bio %}
+                        <div class="bio">
+                            {{ profile.bio|linebreaks }}
+                        </div>
+                    {% endif %}
+                    {% if profile.affiliation %}
+                        <div class="item">
+                            <span class="dim">
+                                <i class="fa fa-institution"></i>
+                            </span>
+                            {{ profile.affiliation }}
+                        </div>
+                    {% endif %}
+                    {% if profile.location %}
+                        <div class="item">
+                            <span class="dim">
+                                <i class="fa fa-map-marker"></i>
+                            </span>
+                            {{ profile.location }}
+                        </div>
+                    {% endif %}
+                    {% if profile.website %}
+                        <div class="item">
+                            <span class="dim">
+                                <i class="fa fa-external-link"></i>
+                            </span>
+                            <a href="{{ profile.website }}">{{ profile.website }}</a>
+                        </div>
+                    {% endif %}
+                    {% if profile.twitter_username %}
+                        <div class="item">
+                            <span class="dim">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                            <a href="https://twitter.com/{{ profile.twitter_username }}/">@{{ profile.twitter_username }}</a>
+                        </div>
+                    {% endif %}
+                    <div class="item">
+                        <span class="dim">
+                            <i class="fa fa-clock-o"></i>
+                            Joined on
+                        </span>
+                        {{ profile.user.date_joined }}
+                    </div>
+                </div>
+                {% if request.user == profile.user %}
+                    <a href="{% url 'profiles_edit' %}" class="btn btn-default btn-sm"><i class="fa fa-pencil"></i> Edit Profile</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

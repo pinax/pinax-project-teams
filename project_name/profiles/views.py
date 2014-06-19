@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, DetailView
 
 from django.contrib import messages
 
@@ -24,3 +24,11 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
         response = super(ProfileEditView, self).form_valid(form)
         messages.success(self.request, "You successfully updated your profile.")
         return response
+
+
+class ProfileDetailView(DetailView):
+
+    model = Profile
+    slug_url_kwarg = "username"
+    slug_field = "user__username"
+    context_object_name = "profile"
