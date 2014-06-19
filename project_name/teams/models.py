@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 
 import reversion
+from slugify import slugify
 
 from django.contrib.auth.models import Permission, User
 
@@ -53,6 +54,12 @@ class Team(models.Model):
 
     def managers(self):
         return self.memberships.filter(state="manager")
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)[:50]
+        self.full_clean()
+        super(Team, self).save(*args, **kwargs)
 
 
 MEMBERSHIP_STATE_CHOICES = [
