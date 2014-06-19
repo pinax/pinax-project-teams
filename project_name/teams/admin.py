@@ -2,7 +2,7 @@ from django.contrib import admin
 
 import reversion
 
-from symposion.teams.models import Team, Membership
+from .models import Team, Membership
 
 admin.site.register(Team,
     prepopulated_fields={"slug": ("name",)},

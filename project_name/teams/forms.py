@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
 
-from symposion.teams.models import Membership
+from .models import Membership
 
 
 class TeamInvitationForm(forms.Form):

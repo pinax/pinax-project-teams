@@ -4,10 +4,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from symposion.utils.mail import send_email
+# from symposion.utils.mail import send_email
 
-from symposion.teams.forms import TeamInvitationForm
-from symposion.teams.models import Team, Membership
+from .forms import TeamInvitationForm
+from .models import Team, Membership
 
 
 ## perm checks
@@ -65,7 +65,7 @@ def team_detail(request, slug):
             form = TeamInvitationForm(request.POST, team=team)
             if form.is_valid():
                 form.invite()
-                send_email([form.user.email], "teams_user_invited", context={"team": team})
+                # send_email([form.user.email], "teams_user_invited", context={"team": team})
                 messages.success(request, "Invitation created.")
                 return redirect("team_detail", slug=slug)
         else:
