@@ -29,8 +29,6 @@ class Page(models.Model):
         unique_together = [("wiki", "slug")]
 
 
-# @@@ how should locking be enabled
-
 class Revision(models.Model):
     page = models.ForeignKey(Page, related_name="revisions")
     content = models.TextField(help_text="Use markdown to mark up your text")
