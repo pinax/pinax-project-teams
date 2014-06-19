@@ -1,0 +1,28 @@
+{% extends "site_base.html" %}
+
+{% block title %}
+    {% if page.pk %}
+        Edit {{ page.slug }}
+    {% else %}
+        Add {{ page.slug }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1>
+        {% if page.pk %}
+            Edit {{ page.slug }}
+        {% else %}
+            Add {{ page.slug }}
+        {% endif %}
+    </h1>
+
+    <form class="form" method="POST" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="pull-right">
+            <a class="btn btn-default" href="{% url 'wakawaka_page' slug=page.team.slug page_slug=page.slug %}">Cancel</a>
+            <button class="btn btn-primary">Save</button>
+        </div>
+    </form>
+{% endblock %}
