@@ -5,7 +5,7 @@ from .models import Revision
 
 class RevisionForm(forms.ModelForm):
 
-    revision_pk = forms.IntegerField(widget=forms.HiddenInput())
+    revision_pk = forms.IntegerField(required=False, widget=forms.HiddenInput())
     message = forms.CharField(required=False, help_text="Leave a helpful message about your change")
 
     def __init__(self, *args, **kwargs):
@@ -18,7 +18,7 @@ class RevisionForm(forms.ModelForm):
         return self.cleaned_data["content"]
 
     def clean(self):
-        if self.cleaned_data["revision_pk"] != self.instance.pk:
+        if self.cleaned_data.get("revision_pk") != self.instance.pk:
             raise forms.ValidationError("Someone edited this before you")
         return self.cleaned_data
 
