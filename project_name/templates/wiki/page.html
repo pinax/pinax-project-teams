@@ -1,22 +1,22 @@
 {% extends "site_base.html" %}
 
 {% block body %}
-    <h1><a href="{% url 'wiki_page' slug=page.team.slug page_slug=page.slug %}">{{ page.slug }}</a></h1>
+    <h1><a href="{{ revision.page.get_absolute_url }}">{{ revision.page.slug }}</a></h1>
 
     <div class="page">
-        {{ revision.content_html }}
+        {{ revision.content_html|safe }}
     </div>
 
     <div class="info">
         <span>
-            <strong>{{ page.slug }}</strong>
+            <strong>{{ revision.page.slug }}</strong>
         </span>
         <span>
-            Recently modified by <em>{{ page.revisions.latest.creator }}</em>: {{ revision.modified }}
+            Recently modified by <em>{{ revision.page.revisions.latest.creator }}</em>: {{ revision.created_by }} ({{ revision.page.revisions.count }} revision(s))
         </span>
 
         <span>
-            <a href="{% url 'wiki_edit' slug=page.team.slug page_slug=page.slug %}">Edit</a>
+            <a href="{{ revision.page.get_edit_url }}">Edit</a>
         </span>
     </div>
 {% endblock %}

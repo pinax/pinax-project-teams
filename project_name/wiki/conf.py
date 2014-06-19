@@ -25,7 +25,10 @@ class WikiAppConf(AppConf):
 
     IP_ADDRESS_META_FIELD = "HTTP_X_FORWARDED_FOR"
     HOOKSET = "project_name.wiki.hooks.WikiDefaultHookset"
-    PARSE = "project_name.wiki.parsers.markdown.parse"
+    PARSE = "project_name.wiki.parsers.markdown_parse"
 
     def configure_hookset(self, value):
         return load_path_attr(value)()
+
+    def configure_parse(self, value):
+        return load_path_attr(value)

@@ -2,18 +2,29 @@ from django.db import models
 from django.utils import timezone
 
 from django.contrib.auth.models import User
-
-from project_name.teams.models import Team
+from django.contrib.contenttypes.models import ContentType
 
 from .conf import settings
+from .hooks import hookset
+
+
+class Wiki(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.IntegerField()
 
 
 class Page(models.Model):
-    team = models.ForeignKey(Team, related_name="pages")
+    wiki = models.ForeignKey(Wiki, related_name="pages")  # @@@ Could make
     slug = models.SlugField()
 
+    def get_absolute_url(self):
+        return hookset.page_url(self.wiki, self.slug)
+
+    def get_edit_url(self):
+        return hookset.page_edit_url(self.wiki, self.slug)
+
     class Meta:
-        unique_together = [("team", "slug")]
+        unique_together = [("wiki", "slug")]
 
 
 # @@@ how should locking be enabled

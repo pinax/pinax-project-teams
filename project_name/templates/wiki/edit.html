@@ -8,7 +8,7 @@
     {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block body %}
     <h1>
         {% if page.pk %}
             Edit {{ page.slug }}
@@ -21,7 +21,6 @@
         {% csrf_token %}
         {{ form.as_p }}
         <div class="pull-right">
-            <a class="btn btn-default" href="{% url 'wakawaka_page' slug=page.team.slug page_slug=page.slug %}">Cancel</a>
             <button class="btn btn-primary">Save</button>
         </div>
     </form>

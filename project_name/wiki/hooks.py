@@ -3,7 +3,7 @@ from .conf import settings
 
 class WikiDefaultHookset(object):
 
-    def can_create_page(self, team, user):
+    def can_create_page(self, wiki, user):
         return False
 
     def can_edit_page(self, page, user):
@@ -14,6 +14,12 @@ class WikiDefaultHookset(object):
 
     def can_view_page(self, page, user):
         return False
+
+    def page_url(self, wiki, slug):
+        return "/"
+
+    def page_edit_url(self, wiki, slug):
+        return "/"
 
 
 class HookProxy(object):
