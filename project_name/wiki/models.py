@@ -1,3 +1,8 @@
+import os
+import re
+import uuid
+
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 
@@ -7,6 +12,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from .conf import settings
 from .hooks import hookset
+
+
+MEDIA_RE = re.compile(r"w/file-download/(\d+)/")
 
 
 class Wiki(models.Model):
@@ -37,9 +45,41 @@ class Revision(models.Model):
     created_ip = models.IPAddressField()
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, related_name="revisions_created")
+    media = models.ManyToManyField("MediaFile", blank=True, related_name="revisions")
 
     def parse(self):
         self.content_html = settings.WIKI_PARSE(self.content)
 
+    def process_media(self):
+        pks = MEDIA_RE.findall(self.content)
+        media = MediaFile.objects.filter(user=self.created_by, pk__in=pks)
+        self.media.clear()
+        for mf in media:
+            self.media.add(mf)
+
+    def save(self, *args, **kwargs):
+        super(Revision, self).save(*args, **kwargs)
+        self.process_media()
+
     class Meta:
         get_latest_by = "created_at"
+
+
+def uuid_filename(instance, filename):
+    ext = filename.split(".")[-1]
+    filename = "{0}.{1}".format(uuid.uuid4(), ext)
+    return os.path.join("revision-files", filename)
+
+
+class MediaFile(models.Model):
+
+    user = models.ForeignKey(User, related_name="media_files")
+    created = models.DateTimeField(editable=False, default=timezone.now)
+    filename = models.CharField(max_length=255)
+    file = models.FileField(upload_to=uuid_filename)
+
+    def download_url(self):
+        return reverse("wiki_file_download", args=[self.pk, os.path.basename(self.filename)])
+
+    def __unicode__(self):
+        return self.filename

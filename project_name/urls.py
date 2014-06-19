@@ -32,6 +32,9 @@ urlpatterns = patterns(
     url(r"^t/(?P<team_slug>[\w\-]+)/w/$", "project_name.wiki.views.index", {"wiki_lookup": team_wiki_lookup}, name="team_wiki_index"),
     url(r"^t/(?P<team_slug>[\w\-]+)/w/(?P<slug>%s)/$" % WIKI_SLUG, "project_name.wiki.views.page", {"wiki_lookup": team_wiki_lookup}, name="team_wiki_page"),
     url(r"^t/(?P<team_slug>[\w\-]+)/w/(?P<slug>%s)/edit/$" % WIKI_SLUG, "project_name.wiki.views.edit", {"wiki_lookup": team_wiki_lookup}, name="team_wiki_page_edit"),
+
+    url(r"^w/file-download/(\d+)/([^/]+)$", "project_name.wiki.views.file_download", name="wiki_file_download"),
+    url(r"^a/file-upload/$", "project_name.wiki.views.file_upload", name="wiki_file_upload")
 )
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

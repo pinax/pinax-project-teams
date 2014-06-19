@@ -21,8 +21,15 @@
         {% endif %}
     </h1>
 
-    <form class="form" method="POST" action="">
+    <form class="form dropzone" method="POST" action="">
         {% csrf_token %}
+        <p>
+            To include an image on a card, drag it here
+        </p>
+        <input type="file" class="hide fileupload" name="files" data-url="{% url 'wiki_file_upload' %}" multiple>
+        <div class="progress progress-striped hide">
+            <div class="progress-bar" role="progressbar" style="width: 0%;"></div>
+        </div>
         {{ form|bootstrap }}
         <div class="pull-right">
             <a href="{{ page.get_absolute_url }}" class="btn btn-default">Cancel</a>

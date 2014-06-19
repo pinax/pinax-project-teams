@@ -32,5 +32,102 @@
     <script src="{% block jquery_src %}{% static "pinax/js/jquery.js" %}{% endblock %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script src="{% static "pinax/js/theme.js" %}"></script>
+    <script src="{% static "js/jquery.ui.widget.js" %}"></script>
+    <script src="{% static "js/jquery.fileupload.js" %}"></script>
+    <script>
+        var fileupload = function () {
+            $('.fileupload').each(function () {
+                var $that = $(this),
+                    $dropzone = $that.closest(".dropzone"),
+                    $textarea = $dropzone.find("textarea"),
+                    $progress = $dropzone.find(".progress");
+                $that.fileupload({
+                    dropZone: $dropzone,
+                    dataType: "json",
+                    singleFileUploads: false,
+                    done: function (e, data) {
+                        var $textarea = $dropzone.find("textarea"),
+                            content = $textarea.val(),
+                            start = $textarea.prop("selectionStart"),
+                            end = $textarea.prop("selectionEnd"),
+                            markdown = "\n";
+
+                        if (start === end && start === 0) {
+                            start = end = content.length;
+                        }
+                        for (var i=0; i<data.result.uploads.length; i++) {
+                            var f = data.result.uploads[i];
+                            markdown += "![" + f.filename + "](" + f.download_url + ")\n\n";
+                        }
+
+                        $textarea.val(content.substring(0, start) + markdown + content.substring(end, content.length));
+                        $progress.addClass("hide");
+                    },
+                    fail: function (e, data) {
+                        $dropzone.prepend("<div class='alert alert-danger'>Upload attempt failed. Try again.</div>");
+                        $progress.addClass("hide");
+                    },
+                    start: function (e, data) {
+                        $progress.removeClass("hide");
+                    },
+                    progressall: function (e, data) {
+                        var progress = parseInt(data.loaded / data.total * 100, 10);
+                        $progress.find(".progress-bar").css("width", progress + "%");
+                    }
+                });
+            });
+        }
+        $(function() {
+            $(document).bind("drop dragover", function (e) {
+                e.preventDefault();
+            });
+            $(document).bind("dragover", function (e) {
+                var dropZone = $('.dropzone'),
+                    foundDropzone,
+                    timeout = window.dropZoneTimeout;
+                if (!timeout)
+                {
+                    dropZone.addClass('in');
+                }
+                else
+                {
+                    clearTimeout(timeout);
+                }
+                var found = false,
+                node = e.target;
+
+                do{
+
+                    if ($(node).hasClass('dropzone'))
+                    {
+                        found = true;
+                        foundDropzone = $(node);
+                        break;
+                    }
+
+                    node = node.parentNode;
+
+                }while (node != null);
+
+                dropZone.removeClass('in hover');
+
+                if (found)
+                {
+                    foundDropzone.addClass('hover');
+                    $("body").removeClass("hovering");
+                } else {
+                    $("body").addClass("hovering");
+                }
+
+                window.dropZoneTimeout = setTimeout(function ()
+                {
+                    window.dropZoneTimeout = null;
+                    dropZone.removeClass('in hover');
+                    $("body").removeClass("hovering");
+                }, 100);
+            });
+            fileupload();
+        });
+    </script>
     {% block extra_script %}{% endblock %}
 {% endblock %}
