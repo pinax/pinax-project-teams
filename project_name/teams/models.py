@@ -1,4 +1,6 @@
 import datetime
+import os
+import uuid
 
 from django.db import models
 
@@ -6,6 +8,12 @@ import reversion
 from slugify import slugify
 
 from django.contrib.auth.models import Permission, User
+
+
+def avatar_upload(instance, filename):
+    ext = filename.split(".")[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join("avatars", filename)
 
 
 TEAM_ACCESS_CHOICES = [
@@ -19,6 +27,7 @@ class Team(models.Model):
 
     slug = models.SlugField(unique=True)
     name = models.CharField(max_length=100)
+    avatar = models.ImageField(upload_to=avatar_upload, blank=True)
     description = models.TextField(blank=True)
     access = models.CharField(max_length=20, choices=TEAM_ACCESS_CHOICES)
 

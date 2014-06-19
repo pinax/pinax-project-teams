@@ -14,6 +14,7 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = [
             "name",
+            "avatar",
             "description",
             "access",
         ]

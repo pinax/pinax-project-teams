@@ -1,10 +1,36 @@
 {% extends "site_base.html" %}
 
 {% load bootstrap %}
+{% load thumbnail %}
 
 {% block body_class %}teams{% endblock %}
 
 {% block head_title %}Create Team{% endblock %}
+
+{% block extra_style %}
+    <style type="text/css">
+    .btn-avatar {
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-avatar input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        transform: translate(-300px, 0) scale(4);
+        font-size: 23px;
+        direction: ltr;
+        cursor: pointer;
+    }
+    .remove input {
+        float:left;
+        margin-right: 10px;
+    }
+    </style>
+{% endblock %}
 
 {% block body %}
     <div class="row">
@@ -12,7 +38,28 @@
             <form class="form profile-form" action="" method="POST" enctype="multipart/form-data">
                 <legend>Create Team</legend>
                 {% csrf_token %}
-                {{ form|bootstrap }}
+
+                {{ form.name|bootstrap }}
+
+                <div id="div_id_avatar" class="control-group">
+                    <label for="id_avatar" class="control-label">
+                        Avatar
+                    </label>
+                    <div class="controls">
+                        {% if profile.avatar %}
+                            <img class="img-polaroid avatar hidden-phone" src="{% thumbnail profile.avatar 160x160 crop %}" alt="{{ profile.name }}" /><br />
+                        {% endif %}
+                        <span class="btn btn-success btn-avatar btn-small">
+                            <span>Select File</span>
+                            <input id="id_avatar" name="avatar" type="file">
+                        </span>
+                        <span class="selected-filename"></span>
+                    </div>
+                </div>
+
+                {{ form.description|bootstrap }}
+                {{ form.access|bootstrap }}
+
                 <button type="submit" class="btn btn-primary">Save</button>
             </form>
         </div>
