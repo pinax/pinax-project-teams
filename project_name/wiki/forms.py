@@ -10,7 +10,6 @@ class RevisionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RevisionForm, self).__init__(*args, **kwargs)
-        print self.instance, self.instance.pk
         self.fields["revision_pk"].initial = self.instance.pk
 
     def clean_content(self):
