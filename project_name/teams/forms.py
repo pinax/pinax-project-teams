@@ -5,7 +5,18 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
 
-from .models import Membership
+from .models import Membership, Team
+
+
+class TeamForm(forms.ModelForm):
+
+    class Meta:
+        model = Team
+        fields = [
+            "name",
+            "description",
+            "access",
+        ]
 
 
 class TeamInvitationForm(forms.Form):

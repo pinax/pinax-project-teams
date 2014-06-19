@@ -1,12 +1,15 @@
 from django.http import Http404, HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic.edit import CreateView
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+from account.mixins import LoginRequiredMixin
+
 # from symposion.utils.mail import send_email
 
-from .forms import TeamInvitationForm
+from .forms import TeamInvitationForm, TeamForm
 from .models import Team, Membership
 
 
@@ -51,6 +54,16 @@ def can_invite(team, user):
 
 
 ## views
+
+
+class TeamCreateView(LoginRequiredMixin, CreateView):
+
+    form_class = TeamForm
+    model = Team
+
+    def form_valid(self, form):
+        response = super(TeamCreateView, self).form_valid(form)
+        return response
 
 
 @login_required

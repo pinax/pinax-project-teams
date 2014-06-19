@@ -1,8 +1,13 @@
 from django.conf.urls import patterns, url
 
+from .views import TeamCreateView
+
 
 urlpatterns = patterns(
     "project_name.teams.views",
+
+    # overall
+    url(r"^:create/$", TeamCreateView.as_view(), name="team_create"),
 
     # team specific
     url(r"^(?P<slug>[\w\-]+)/$", "team_detail", name="team_detail"),
