@@ -21,7 +21,7 @@ class TeamForm(forms.ModelForm):
 
 class TeamInvitationForm(forms.Form):
 
-    email = forms.EmailField(help_text="email address must be that of an account on this conference site")
+    email = forms.EmailField(help_text="email address must be that of an account on this site")
 
     def __init__(self, *args, **kwargs):
         self.team = kwargs.pop("team")
@@ -39,7 +39,7 @@ class TeamInvitationForm(forms.Form):
         except User.DoesNotExist:
             # eventually we can invite them but for now assume they are
             # already on the site
-            raise forms.ValidationError(mark_safe("no account with email address <b>%s</b> found on this conference site" % escape(email)))
+            raise forms.ValidationError(mark_safe("no account with email address <b>%s</b> found on this site" % escape(email)))
 
         state = self.team.get_state_for_user(user)
 

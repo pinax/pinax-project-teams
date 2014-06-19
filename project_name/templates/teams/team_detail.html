@@ -18,7 +18,7 @@
             {% if can_leave %}
                 <form method="post" action="{% url 'team_leave' team.slug %}">
                     {% csrf_token %}
-                    <input type="submit" class="btn" value="leave">
+                    <input type="submit" class="btn btn-default" value="leave">
                 </form>
             {% endif %}
 
@@ -92,9 +92,7 @@
                         {% csrf_token %}
                         <legend>Invite User to Team</legend>
                         {{ invite_form|bootstrap }}
-                        <div class="form-actions">
-                            <input class="btn btn-primary" type="submit" value="Invite" />
-                        </div>
+                        <button type="submit" class="btn btn-primary">Invite</button>
                     </form>
                 {% endif %}
             {% endif %}
