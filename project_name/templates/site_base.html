@@ -78,6 +78,10 @@
             });
         }
         $(function() {
+            $(document).on("click", ".file-browse", function (e) {
+                e.preventDefault();
+                $(".fileupload").click();
+            });
             $(document).bind("drop dragover", function (e) {
                 e.preventDefault();
             });

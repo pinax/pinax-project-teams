@@ -24,7 +24,7 @@
     <form class="form dropzone" method="POST" action="">
         {% csrf_token %}
         <p>
-            To include an image on a card, drag it here
+            To include an image on a card, drag it to this form or <a href="#" class="file-browse">browse for a file</a>.
         </p>
         <input type="file" class="hide fileupload" name="files" data-url="{% url 'wiki_file_upload' %}" multiple>
         <div class="progress progress-striped hide">
