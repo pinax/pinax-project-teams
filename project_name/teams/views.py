@@ -128,10 +128,10 @@ def team_apply(request, slug):
         membership.state = "applied"
         membership.save()
         managers = [m.user.email for m in team.managers()]
-        send_email(managers, "teams_user_applied", context={
-            "team": team,
-            "user": request.user
-        })
+        # send_email(managers, "teams_user_applied", context={
+        #     "team": team,
+        #     "user": request.user
+        # })
         messages.success(request, "Applied to join team.")
         return redirect("team_detail", slug=slug)
     else:
