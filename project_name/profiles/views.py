@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.views.generic import UpdateView, DetailView
+from django.views.generic import UpdateView, DetailView, ListView
 
 from django.contrib import messages
 
@@ -32,3 +32,9 @@ class ProfileDetailView(DetailView):
     slug_url_kwarg = "username"
     slug_field = "user__username"
     context_object_name = "profile"
+
+
+class ProfileListView(ListView):
+
+    model = Profile
+    context_object_name = "profiles"

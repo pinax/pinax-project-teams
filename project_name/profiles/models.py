@@ -36,4 +36,4 @@ class Profile(models.Model):
         if self.name:
             return self.name
         else:
-            return self.username
+            return self.user.username
