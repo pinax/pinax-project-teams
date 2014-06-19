@@ -1,6 +1,6 @@
 from django.http import Http404, HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -61,9 +61,11 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
     form_class = TeamForm
     model = Team
 
-    def form_valid(self, form):
-        response = super(TeamCreateView, self).form_valid(form)
-        return response
+
+class TeamUpdateView(LoginRequiredMixin, UpdateView):
+
+    form_class = TeamForm
+    model = Team
 
 
 @login_required
