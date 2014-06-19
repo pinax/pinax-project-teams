@@ -37,7 +37,6 @@ def handle_team_save(sender, **kwargs):
         create_wiki(obj)
 
 
-
 @receiver(user_logged_in)
 def handle_user_logged_in(sender, **kwargs):
     log(
