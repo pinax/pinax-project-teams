@@ -31,9 +31,9 @@ class Page(models.Model):
 
 class Revision(models.Model):
     page = models.ForeignKey(Page, related_name="revisions")
-    content = models.TextField()
+    content = models.TextField(help_text="Use markdown to mark up your text")
     content_html = models.TextField()
-    message = models.TextField(blank=True)
+    message = models.TextField(blank=True, help_text="Leave a helpful message about your change")
     created_ip = models.IPAddressField()
     created_at = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, related_name="revisions_created")

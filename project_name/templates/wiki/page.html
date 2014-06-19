@@ -1,22 +1,10 @@
 {% extends "site_base.html" %}
 
 {% block body %}
-    <h1><a href="{{ revision.page.get_absolute_url }}">{{ revision.page.slug }}</a></h1>
+
+    <a class="pull-right btn btn-xs btn-primary" href="{{ revision.page.get_edit_url }}">Edit</a>
 
     <div class="page">
         {{ revision.content_html|safe }}
-    </div>
-
-    <div class="info">
-        <span>
-            <strong>{{ revision.page.slug }}</strong>
-        </span>
-        <span>
-            Recently modified by <em>{{ revision.page.revisions.latest.creator }}</em>: {{ revision.created_by }} ({{ revision.page.revisions.count }} revision(s))
-        </span>
-
-        <span>
-            <a href="{{ revision.page.get_edit_url }}">Edit</a>
-        </span>
     </div>
 {% endblock %}

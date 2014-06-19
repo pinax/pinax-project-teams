@@ -40,7 +40,7 @@ def edit(request, slug, wiki_lookup, *args, **kwargs):
         form = PageForm(request.POST)
         if form.is_valid():
             if initial["content"] == form.cleaned_data["content"]:
-                form.errors["content"] = "You haven't made any changes!"
+                form.errors["content"] = ["You haven't made any changes!"]
             else:
                 if page.pk is None:
                     page.save()
