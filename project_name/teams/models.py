@@ -64,6 +64,9 @@ class Team(models.Model):
     def managers(self):
         return self.memberships.filter(state="manager")
 
+    def is_on_team(self, user):
+        return self.memberships.exclude(state__in=["applied", "invited", "declined", "rejected"]).filter(user=user).exists()
+
     def save(self, *args, **kwargs):
         if not self.id:
             self.slug = slugify(self.name)[:50]

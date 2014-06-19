@@ -1,3 +1,4 @@
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import redirect, render
 
 from .conf import settings
@@ -15,10 +16,12 @@ def page(request, slug, wiki_lookup, *args, **kwargs):
     wiki = wiki_lookup(*args, **kwargs)
     try:
         page = wiki.pages.get(slug=slug)
+        if not hookset.can_view_page(page, request.user):
+            raise Http404()
+        rev = page.revisions.latest()
+        return render(request, "wiki/page.html", {"revision": rev, "can_edit": hookset.can_edit_page(page, request.user)})
     except Page.DoesNotExist:
         return redirect(hookset.page_edit_url(wiki, slug))
-    rev = page.revisions.latest()
-    return render(request, "wiki/page.html", {"revision": rev})
 
 
 def edit(request, slug, wiki_lookup, *args, **kwargs):
@@ -29,6 +32,8 @@ def edit(request, slug, wiki_lookup, *args, **kwargs):
         initial = {
             "content": rev.content
         }
+        if not hookset.can_edit_page(page, request.user):
+            return HttpResponseForbidden()
     except Page.DoesNotExist:
         page = Page(wiki=wiki, slug=slug)
         rev = None
@@ -36,6 +41,8 @@ def edit(request, slug, wiki_lookup, *args, **kwargs):
             "content": "add content and create a new page",
             "message": "initial revision"
         }
+        if not hookset.can_edit_page(page, request.user):
+            raise Http404()
     if request.method == "POST":
         form = PageForm(request.POST)
         if form.is_valid():
@@ -58,4 +65,5 @@ def edit(request, slug, wiki_lookup, *args, **kwargs):
         "form": form,
         "page": page,
         "revision": rev,
+        "can_delete": hookset.can_delete_page(page, request.user)
     })

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 from .conf import settings
@@ -11,6 +12,7 @@ from .hooks import hookset
 class Wiki(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.IntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
 
 
 class Page(models.Model):
