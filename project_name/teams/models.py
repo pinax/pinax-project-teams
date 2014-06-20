@@ -37,6 +37,7 @@ class Team(models.Model):
     # manager permissions
     manager_permissions = models.ManyToManyField(Permission, blank=True, related_name="manager_teams")
 
+    creator = models.ForeignKey(User, related_name="teams_created")
     created = models.DateTimeField(default=datetime.datetime.now, editable=False)
 
     @models.permalink
@@ -86,6 +87,7 @@ MEMBERSHIP_STATE_CHOICES = [
 
 class Membership(models.Model):
 
+    STATE_MANAGER = "manager"
     user = models.ForeignKey(User, related_name="memberships")
     team = models.ForeignKey(Team, related_name="memberships")
     state = models.CharField(max_length=20, choices=MEMBERSHIP_STATE_CHOICES)

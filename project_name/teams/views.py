@@ -62,6 +62,12 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
     form_class = TeamForm
     model = Team
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.creator = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class TeamUpdateView(LoginRequiredMixin, UpdateView):
 
