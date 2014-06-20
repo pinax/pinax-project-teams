@@ -22,8 +22,8 @@ class AvailableTeamsNode(template.Node):
         request = context["request"]
         teams = []
         for team in Team.objects.all():
-            state = team.get_state_for_user(request.user)
-            if team.access == Team.ACCESS_OPEN and state is None:
+            state = team.state_for(request.user)
+            if team.member_access == Team.MEMBER_ACCESS_OPEN and state is None:
                 teams.append(team)
             elif request.user.is_staff and state is None:
                 teams.append(team)

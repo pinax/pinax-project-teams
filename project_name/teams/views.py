@@ -1,60 +1,24 @@
-from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed, HttpResponseForbidden
+import json
+
+from django.db.models import Q
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template import RequestContext
+from django.template.loader import render_to_string
+from django.views.decorators.http import require_POST
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 
 from account.mixins import LoginRequiredMixin
 
 # from symposion.utils.mail import send_email
 
-from .forms import TeamInvitationForm, TeamForm
+from .forms import TeamInviteUserForm, TeamForm
 from .models import Team, Membership
-
-
-## perm checks
-#
-# @@@ these can be moved
-
-def can_join(team, user):
-    state = team.get_state_for_user(user)
-    if team.access == Team.ACCESS_OPEN and state is None:
-        return True
-    elif state == Membership.STATE_INVITED:
-        return True
-    elif user.is_staff and state is None:
-        return True
-    else:
-        return False
-
-
-def can_leave(team, user):
-    state = team.get_state_for_user(user)
-    if state == Membership.STATE_MEMBER:  # managers can't leave at the moment
-        return True
-    else:
-        return False
-
-
-def can_apply(team, user):
-    state = team.get_state_for_user(user)
-    if team.access == Team.ACCESS_APPLICATION and state is None:
-        return True
-    else:
-        return False
-
-
-def can_invite(team, user):
-    state = team.get_state_for_user(user)
-    if team.access == Team.ACCESS_INVITATION:
-        if state == Membership.STATE_MANAGER or user.is_staff:
-            return True
-    return False
-
-
-## views
 
 
 class TeamCreateView(LoginRequiredMixin, CreateView):
@@ -76,13 +40,13 @@ class TeamUpdateView(LoginRequiredMixin, UpdateView):
 
     def get(self, request, *args, **kwargs):
         response = super(TeamUpdateView, self).get(request, *args, **kwargs)
-        if not self.object.is_manager(request.user):
+        if not self.object.is_owner_or_manager(request.user):
             response = HttpResponseForbidden()
         return response
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.object.is_manager(request.user):
+        if not self.object.is_owner_or_manager(request.user):
             return HttpResponseForbidden()
         return super(TeamUpdateView, self).post(request, *args, **kwargs)
 
@@ -96,53 +60,49 @@ class TeamListView(ListView):
 @login_required
 def team_detail(request, slug):
     team = get_object_or_404(Team, slug=slug)
-    state = team.get_state_for_user(request.user)
-    if team.access == Team.ACCESS_INVITATION and state is None and not request.user.is_staff:
+    state = team.state_for(request.user)
+    role = team.role_for(request.user)
+    if team.manager_access == Team.MEMBER_ACCESS_INVITATION and state is None and not request.user.is_staff:
         raise Http404()
 
     return render(request, "teams/team_detail.html", {
         "team": team,
         "state": state,
-        "can_join": can_join(team, request.user),
-        "can_leave": can_leave(team, request.user),
-        "can_apply": can_apply(team, request.user),
+        "role": role,
+        "invite_form": TeamInviteUserForm(team=team),
+        "can_join": team.can_join(request.user),
+        "can_leave": team.can_leave(request.user),
+        "can_apply": team.can_apply(request.user),
     })
 
 
 @login_required
 def team_manage(request, slug):
     team = get_object_or_404(Team, slug=slug)
-    state = team.get_state_for_user(request.user)
-    if state != Membership.STATE_MANAGER and not request.user.is_staff:
+    state = team.state_for(request.user)
+    role = team.role_for(request.user)
+    if team.manager_access == Team.MEMBER_ACCESS_INVITATION and state is None and not request.user.is_staff:
         raise Http404()
-
-    if can_invite(team, request.user):
-        if request.method == "POST":
-            form = TeamInvitationForm(request.POST, team=team)
-            if form.is_valid():
-                form.invite()
-                # send_email([form.user.email], "teams_user_invited", context={"team": team})
-                messages.success(request, "Invitation created.")
-                return redirect("team_detail", slug=slug)
-        else:
-            form = TeamInvitationForm(team=team)
-    else:
-        form = None
 
     return render(request, "teams/team_manage.html", {
         "team": team,
-        "invite_form": form,
+        "state": state,
+        "role": role,
+        "invite_form": TeamInviteUserForm(team=team),
+        "can_join": team.can_join(request.user),
+        "can_leave": team.can_leave(request.user),
+        "can_apply": team.can_apply(request.user),
     })
 
 
 @login_required
 def team_join(request, slug):
     team = get_object_or_404(Team, slug=slug)
-    state = team.get_state_for_user(request.user)
-    if team.access == Team.ACCESS_INVITATION and state is None and not request.user.is_staff:
+    state = team.state_for(request.user)
+    if team.manager_access == Team.MEMBER_ACCESS_INVITATION and state is None and not request.user.is_staff:
         raise Http404()
 
-    if can_join(team, request.user) and request.method == "POST":
+    if team.can_join(request.user) and request.method == "POST":
         membership, created = Membership.objects.get_or_create(team=team, user=request.user)
         membership.state = Membership.STATE_MEMBER
         membership.save()
@@ -155,11 +115,11 @@ def team_join(request, slug):
 @login_required
 def team_leave(request, slug):
     team = get_object_or_404(Team, slug=slug)
-    state = team.get_state_for_user(request.user)
-    if team.access == Team.ACCESS_INVITATION and state is None and not request.user.is_staff:
+    state = team.state_for(request.user)
+    if team.manager_access == Team.MEMBER_ACCESS_INVITATION and state is None and not request.user.is_staff:
         raise Http404()
 
-    if can_leave(team, request.user) and request.method == "POST":
+    if team.can_leave(request.user) and request.method == "POST":
         membership = Membership.objects.get(team=team, user=request.user)
         membership.delete()
         messages.success(request, "Left team.")
@@ -171,19 +131,14 @@ def team_leave(request, slug):
 @login_required
 def team_apply(request, slug):
     team = get_object_or_404(Team, slug=slug)
-    state = team.get_state_for_user(request.user)
-    if team.access == Team.ACCESS_INVITATION and state is None and not request.user.is_staff:
+    state = team.state_for(request.user)
+    if team.manager_access == Team.MEMBER_ACCESS_INVITATION and state is None and not request.user.is_staff:
         raise Http404()
 
-    if can_apply(team, request.user) and request.method == "POST":
+    if team.can_apply(request.user) and request.method == "POST":
         membership, created = Membership.objects.get_or_create(team=team, user=request.user)
         membership.state = Membership.STATE_APPLIED
         membership.save()
-        managers = [m.user.email for m in team.managers]
-        # send_email(managers, "teams_user_applied", context={
-        #     "team": team,
-        #     "user": request.user
-        # })
         messages.success(request, "Applied to join team.")
         return redirect("team_detail", slug=slug)
     else:
@@ -191,56 +146,88 @@ def team_apply(request, slug):
 
 
 @login_required
+@require_POST
 def team_promote(request, pk):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     membership = get_object_or_404(Membership, pk=pk)
-    state = membership.team.get_state_for_user(request.user)
-    if request.user.is_staff or state == Membership.STATE_MANAGER:
-        if membership.state == Membership.STATE_MEMBER:
-            membership.state = Membership.STATE_MANAGER
-            membership.save()
-            messages.success(request, "Promoted to manager.")
+    if membership.promote(by=request.user):
+        messages.success(request, "Promoted to manager.")
     return redirect("team_detail", slug=membership.team.slug)
 
 
 @login_required
+@require_POST
 def team_demote(request, pk):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     membership = get_object_or_404(Membership, pk=pk)
-    state = membership.team.get_state_for_user(request.user)
-    if request.user.is_staff or state == Membership.STATE_MANAGER:
-        if membership.state == Membership.STATE_MANAGER:
-            membership.state = Membership.STATE_MEMBER
-            membership.save()
-            messages.success(request, "Demoted from manager.")
+    if membership.demote(by=request.user):
+        messages.success(request, "Demoted from manager.")
     return redirect("team_detail", slug=membership.team.slug)
 
 
 @login_required
+@require_POST
 def team_accept(request, pk):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     membership = get_object_or_404(Membership, pk=pk)
-    state = membership.team.get_state_for_user(request.user)
-    if request.user.is_staff or state == Membership.STATE_MANAGER:
-        if membership.state == Membership.STATE_APPLIED:
-            membership.state = Membership.STATE_MEMBER
-            membership.save()
-            messages.success(request, "Accepted application.")
+    if membership.accept(by=request.user):
+        messages.success(request, "Accepted application.")
     return redirect("team_detail", slug=membership.team.slug)
 
 
 @login_required
+@require_POST
 def team_reject(request, pk):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
     membership = get_object_or_404(Membership, pk=pk)
-    state = membership.team.get_state_for_user(request.user)
-    if request.user.is_staff or state == Membership.STATE_MANAGER:
-        if membership.state == Membership.STATE_APPLIED:
-            membership.state = Membership.STATE_REJECTED
-            membership.save()
-            messages.success(request, "Rejected application.")
+    if membership.reject(by=request.user):
+        messages.success(request, "Rejected application.")
     return redirect("team_detail", slug=membership.team.slug)
+
+
+@login_required
+@require_POST
+def team_invite(request, slug):
+    team = get_object_or_404(Team, slug=slug)
+    role = team.role_for(request.user)
+    if role not in [Membership.ROLE_MANAGER, Membership.ROLE_OWNER]:
+        raise Http404()
+    form = TeamInviteUserForm(request.POST, team=team)
+    if form.is_valid():
+        user_or_email = form.cleaned_data["invitee"]
+        role = form.cleaned_data["role"]
+        if isinstance(user_or_email, basestring):
+            membership = team.invite_user(request.user, user_or_email, role)
+        else:
+            membership = team.add_user(user_or_email, role)
+        data = {
+            "html": render_to_string("teams/_invite_form.html", {"invite_form": TeamInviteUserForm(team=team), "team": team}, context_instance=RequestContext(request)),
+            "append-fragments": {
+                ".memberships": render_to_string("teams/_membership.html", {"membership": membership}, context_instance=RequestContext(request))
+            }
+        }
+    else:
+        data = {
+            "html": render_to_string("teams/_invite_form.html", {"invite_form": form, "team": team}, context_instance=RequestContext(request))
+        }
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+@login_required
+def autocomplete_users(request, slug):
+    team = get_object_or_404(Team, slug=slug)
+    role = team.role_for(request.user)
+    if role not in [Membership.ROLE_MANAGER, Membership.ROLE_OWNER]:
+        raise Http404()
+    users = User.objects.exclude(pk__in=[
+        x.user.pk for x in team.memberships.exclude(user__isnull=True)
+    ])
+    q = request.GET.get("query")
+    results = []
+    if q:
+        results.extend([
+            {"pk": x.pk, "email": x.email, "name": x.get_full_name()}
+            for x in users.filter(
+                Q(email__icontains=q) |
+                Q(username__icontains=q) |
+                Q(first_name__icontains=q) |
+                Q(last_name__icontains=q)
+            )
+        ])
+    return HttpResponse(json.dumps(results), content_type="application/json")

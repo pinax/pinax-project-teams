@@ -135,6 +135,7 @@ INSTALLED_APPS = [
     "eventlog",
     "metron",
     "easy_thumbnails",
+    "kaleo",
 
     # project
     "project_name",

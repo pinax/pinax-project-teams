@@ -12,3 +12,4 @@ django-reversion==1.7
 unicode-slugify==0.1.1
 
 creole==1.2
+kaleo==1.5

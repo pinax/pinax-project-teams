@@ -1,9 +1,16 @@
 {% extends "site_base.html" %}
 
+{% load staticfiles %}
 {% load bootstrap %}
 {% load thumbnail %}
 
 {% block head_title %}Manage {{ team.name }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "select2/select2.css" %}" />
+{% endblock %}
+
 
 {% block body %}
     <div class="row">
@@ -16,7 +23,7 @@
             {% if team.description %}<p>{{ team.description }}</p>{% endif %}
         </div>
         <div class="col-md-8">
-            {% if user.is_staff or state == "manager" %}
+            {% if user.is_staff or role == "manager" or role == "owner" %}
                 {% if team.managers %}
                     <h2>Managers</h2>
                     <table class="table table-striped">
@@ -43,7 +50,7 @@
                         {% endfor %}
                     </table>
                 {% endif %}
-                {% if team.applicants and team.access == "application" %}
+                {% if team.applicants and team.member_access == "application" %}
                     <h2>Applicants</h2>
                     <table class="table table-striped">
                         {% for membership in team.applicants %}
@@ -68,14 +75,62 @@
                     </table>
                 {% endif %}
                 {% if invite_form %}
-                    <form method="POST" action="" class="form-horizontal">
-                        {% csrf_token %}
-                        <legend>Invite User to Team</legend>
-                        {{ invite_form|bootstrap }}
-                        <button type="submit" class="btn btn-primary">Invite</button>
-                    </form>
+                    {% include "teams/_invite_form.html" %}
                 {% endif %}
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+
+
+{% block extra_body %}
+    {{ block.super }}
+    <script src="{% static "js/eldarion-ajax.min.js" %}"></script>
+    <script src="{% static "select2/select2.min.js" %}"></script>
+    <script>
+    var loadSelect2 = function (e) {
+        $("[data-autocomplete-url]").each(function(i, e) {
+            var $el = $(e);
+            $el.select2({
+                ajax: {
+                    url: $el.data("autocomplete-url"),
+                    dataType: "json",
+                    type: "GET",
+                    data: function (term, page) {
+                        return {query: term};
+                    },
+                    results: function (data, page) {
+                        return {results: data};
+                    }
+                },
+                id: function (obj) {
+                   return obj.email;
+                },
+                formatSelection: function (obj) {
+                    if (obj.pk < 0) {
+                        return obj.email;
+                    }
+                    return obj.email;
+                },
+                formatResult: function (obj) {
+                    if (obj.pk < 0) {
+                        return "<div class='result new'>" + obj.email + "</div>";
+                    }
+                    return "<div class='result clearfix'>" + obj.name + "&lt;" + obj.email + "&gt;</div>";
+                },
+                minimumInputLength: 1,
+                width: "element",
+                createSearchChoice: function (term, data) {
+                    if ($(data).filter(function() {return this.email === term;}).length===0) {
+                        return { pk:-1, email: term };
+                    }
+                }
+            });
+        })
+    };
+    (function ($) {
+        loadSelect2();
+    }(window.jQuery));
+    </script>
 {% endblock %}

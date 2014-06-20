@@ -16,6 +16,7 @@ urlpatterns = patterns(
     url(r"^$", homepage, name="home"),
     url(r"^admin/", include(admin.site.urls)),
     url(r"^account/", include("account.urls")),
+    url(r"^invites/", include("kaleo.urls")),
 
     url(r"^profile/edit/", ProfileEditView.as_view(), name="profiles_edit"),
     url(r"^u/$", ProfileListView.as_view(), name="profiles_list"),
