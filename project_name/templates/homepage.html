@@ -1,5 +1,6 @@
 {% extends "site_base.html" %}
 
+{% load i18n %}
 {% load teams_tags %}
 
 {% block head_title %}pinax-project-teams{% endblock %}
@@ -7,58 +8,18 @@
 {% block body_class %}home{% endblock %}
 
 {% block body %}
+    <h1>Teams / Wiki Demo</h1>
 
-    {% if user.is_authenticated %}
+    <p class="lead">
+        A demo of <b>pinax-project-teams</b> with per-user and per-team wiki.
+    </p>
 
-        {% available_teams as available_teams %}
-        {% if user.memberships.exists or available_teams %}
-            <div class="dashboard-panel">
-                <div class="dashboard-panel-header">
-                    <i class="icon-group"></i>
-                    <h3>Teams</h3>
-                </div>
-
-                <div class="dashboard-panel-content">
-                    {% if user.memberships.exists %}
-                        <h4>Your Teams</h4>
-                        <table class="table table-striped">
-                            {% for membership in user.memberships.all %}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'team_detail' membership.team.slug %}">{{ membership.team.name }}</a>
-                                        {% if membership.team.description %}<br>{{ membership.team.description }}{% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="label{% if membership.state == 'invited' %} label-info{% endif %}">{{ membership.get_state_display }}</span>
-                                    </td>
-                                    <td>
-                                        {% if membership.state == "manager" or user.is_staff %}
-                                            {% if membership.team.applicants %}{{ membership.team.applicants.count }} applicant{{ membership.team.applicants.count|pluralize }}{% endif %}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                    {% endif %}
-                    {% if available_teams %}
-                        <h4>Available Teams</h4>
-                        <table class="table table-striped">
-                            {% for team in available_teams %}
-                                <tr>
-                                    <td>
-                                        <a href="{% url 'team_detail' team.slug %}">{{ team }}</a>
-                                        {% if team.description %}<br>{{ team.description }}{% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="label">{{ team.get_access_display }}</span>
-                                    </td>
-                                </tr>
-
-                            {% endfor %}
-                        </table>
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
+    {% if ACCOUNT_OPEN_SIGNUP %}
+        <div>
+            <a class="btn btn-default" href="{% url 'account_signup' %}">{% trans "Sign up" %}</a>
+            or
+            <a class="btn btn-default" href="{% url 'account_login' %}">{% trans "Log in" %}</a>
+        </div>
     {% endif %}
+
 {% endblock %}
