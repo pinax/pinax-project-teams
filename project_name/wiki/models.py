@@ -15,7 +15,6 @@ from .hooks import hookset
 
 
 MEDIA_RE = re.compile(r"w/file-download/(\d+)/")
-WIKIWORDS_RE = re.compile(r"\b([A-Z]\w+[A-Z]+\w+)")
 
 
 class Wiki(models.Model):
@@ -48,9 +47,8 @@ class Revision(models.Model):
     created_by = models.ForeignKey(User, related_name="revisions_created")
     media = models.ManyToManyField("MediaFile", blank=True, related_name="revisions")
 
-    def parse(self, root):
-        content = WIKIWORDS_RE.sub(r'<a href="{0}\1">\1</a>'.format(root), self.content)
-        self.content_html = settings.WIKI_PARSE(content)
+    def parse(self):
+        self.content_html = settings.WIKI_PARSE(self.content)
 
     def process_media(self):
         pks = MEDIA_RE.findall(self.content)
