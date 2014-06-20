@@ -191,6 +191,7 @@ WIKI_HOOKSET = "project_name.hooks.ProjectWikiHookset"
 
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend"
 ]
 
 AUTH_PROFILE_MODULE = "profiles.Profile"
