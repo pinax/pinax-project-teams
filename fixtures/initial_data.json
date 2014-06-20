@@ -1,18 +1,18 @@
 [
     {
-        "pk": 1, 
-        "model": "sites.site", 
+        "pk": 1,
+        "model": "sites.site",
         "fields": {
-            "domain": "localhost:8000", 
-            "name": "example.com [localhost]"
+            "domain": "localhost:8000",
+            "name": "Pinax Teams Demo [localhost]"
         }
     },
     {
-        "pk": 2, 
-        "model": "sites.site", 
+        "pk": 2,
+        "model": "sites.site",
         "fields": {
-            "domain": "example.com", 
-            "name": "example.com"
+            "domain": "example.com",
+            "name": "Pinax Teams Demo"
         }
     }
 ]
