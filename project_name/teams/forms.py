@@ -44,10 +44,10 @@ class TeamInvitationForm(forms.Form):
 
         state = self.team.get_state_for_user(user)
 
-        if state in ["member", "manager"]:
+        if state in [Membership.STATE_MEMBER, Membership.STATE_MANAGER]:
             raise forms.ValidationError("user already in team")
 
-        if state in ["invited"]:
+        if state in [Membership.STATE_INVITED]:
             raise forms.ValidationError("user already invited to team")
 
         self.user = user
@@ -57,8 +57,8 @@ class TeamInvitationForm(forms.Form):
 
     def invite(self):
         if self.state is None:
-            Membership.objects.create(team=self.team, user=self.user, state="invited")
-        elif self.state == "applied":
+            Membership.objects.create(team=self.team, user=self.user, state=Membership.STATE_INVITED)
+        elif self.state == Membership.STATE_APPLIED:
             # if they applied we shortcut invitation process
             membership = Membership.objects.filter(team=self.team, user=self.user)
-            membership.update(state="member")
+            membership.update(state=Membership.STATE_MEMBER)

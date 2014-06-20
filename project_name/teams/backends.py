@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from .models import Team
+from .models import Team, Membership
 
 
 class TeamPermissionsBackend(object):
@@ -18,7 +18,7 @@ class TeamPermissionsBackend(object):
         if not hasattr(user_obj, "_team_perm_cache"):
             memberships = Team.objects.filter(
                 Q(memberships__user=user_obj),
-                Q(memberships__state="manager") | Q(memberships__state="member"),
+                Q(memberships__state=Membership.STATE_MANAGER) | Q(memberships__state=Membership.STATE_MEMBER),
             )
             perms = memberships.values_list(
                 "permissions__content_type__app_label",

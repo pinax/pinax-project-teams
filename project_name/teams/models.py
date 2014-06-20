@@ -4,10 +4,11 @@ import uuid
 
 from django.db import models
 
-import reversion
-from slugify import slugify
+from django.contrib.auth.models import User
 
-from django.contrib.auth.models import Permission, User
+import reversion
+
+from slugify import slugify
 
 
 def avatar_upload(instance, filename):
@@ -16,27 +17,23 @@ def avatar_upload(instance, filename):
     return os.path.join("avatars", filename)
 
 
-TEAM_ACCESS_CHOICES = [
-    ("open", "open"),
-    ("application", "by application"),
-    ("invitation", "by invitation")
-]
-
-
 class Team(models.Model):
+
+    ACCESS_OPEN = "open"
+    ACCESS_APPLICATION = "application"
+    ACCESS_INVITATION = "invitation"
+
+    ACCESS_CHOICES = [
+        (ACCESS_OPEN, "open"),
+        (ACCESS_APPLICATION, "by application"),
+        (ACCESS_INVITATION, "by invitation")
+    ]
 
     slug = models.SlugField(unique=True)
     name = models.CharField(max_length=100)
     avatar = models.ImageField(upload_to=avatar_upload, blank=True)
     description = models.TextField(blank=True)
-    access = models.CharField(max_length=20, choices=TEAM_ACCESS_CHOICES)
-
-    # member permissions
-    permissions = models.ManyToManyField(Permission, blank=True, related_name="member_teams")
-
-    # manager permissions
-    manager_permissions = models.ManyToManyField(Permission, blank=True, related_name="manager_teams")
-
+    access = models.CharField(max_length=20, choices=ACCESS_CHOICES)
     creator = models.ForeignKey(User, related_name="teams_created")
     created = models.DateTimeField(default=datetime.datetime.now, editable=False)
 
@@ -54,19 +51,26 @@ class Team(models.Model):
             return None
 
     def applicants(self):
-        return self.memberships.filter(state="applied")
+        return self.memberships.filter(state=Membership.STATE_APPLIED)
 
     def invitees(self):
-        return self.memberships.filter(state="invited")
+        return self.memberships.filter(state=Membership.STATE_INVITED)
 
     def members(self):
-        return self.memberships.filter(state="member")
+        return self.memberships.filter(state=Membership.STATE_MEMBER)
 
     def managers(self):
-        return self.memberships.filter(state="manager")
+        return self.memberships.filter(state=Membership.STATE_MANAGER)
 
     def is_on_team(self, user):
-        return self.memberships.exclude(state__in=["applied", "invited", "declined", "rejected"]).filter(user=user).exists()
+        return self.memberships.exclude(state__in=[
+            Membership.STATE_APPLIED,
+            Membership.STATE_INVITED,
+            Membership.STATE_DECLINED,
+            Membership.STATE_REJECTED
+        ]).filter(
+            user=user
+        ).exists()
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -75,22 +79,27 @@ class Team(models.Model):
         super(Team, self).save(*args, **kwargs)
 
 
-MEMBERSHIP_STATE_CHOICES = [
-    ("applied", "applied"),
-    ("invited", "invited"),
-    ("declined", "declined"),
-    ("rejected", "rejected"),
-    ("member", "member"),
-    ("manager", "manager"),
-]
-
-
 class Membership(models.Model):
 
+    STATE_APPLIED = "applied"
+    STATE_INVITED = "invited"
+    STATE_DECLINED = "declined"
+    STATE_REJECTED = "rejected"
+    STATE_MEMBER = "member"
     STATE_MANAGER = "manager"
+
+    STATE_CHOICES = [
+        (STATE_APPLIED, "applied"),
+        (STATE_INVITED, "invited"),
+        (STATE_DECLINED, "declined"),
+        (STATE_REJECTED, "rejected"),
+        (STATE_MEMBER, "member"),
+        (STATE_MANAGER, "manager"),
+    ]
+
     user = models.ForeignKey(User, related_name="memberships")
     team = models.ForeignKey(Team, related_name="memberships")
-    state = models.CharField(max_length=20, choices=MEMBERSHIP_STATE_CHOICES)
+    state = models.CharField(max_length=20, choices=STATE_CHOICES)
     message = models.TextField(blank=True)
 
 
