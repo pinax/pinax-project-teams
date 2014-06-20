@@ -1,12 +1,13 @@
 from django.conf.urls import patterns, url
 
-from .views import TeamCreateView, TeamUpdateView
+from .views import TeamCreateView, TeamUpdateView, TeamListView
 
 
 urlpatterns = patterns(
     "project_name.teams.views",
 
     # overall
+    url(r"^$", TeamListView.as_view(), name="team_list"),
     url(r"^:create/$", TeamCreateView.as_view(), name="team_create"),
 
     # team specific

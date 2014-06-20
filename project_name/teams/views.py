@@ -1,6 +1,7 @@
 from django.http import Http404, HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic import ListView
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -66,6 +67,12 @@ class TeamUpdateView(LoginRequiredMixin, UpdateView):
 
     form_class = TeamForm
     model = Team
+
+
+class TeamListView(ListView):
+
+    model = Team
+    context_object_name = "teams"
 
 
 @login_required
