@@ -11,4 +11,4 @@ easy-thumbnails==1.4
 django-reversion==1.7
 unicode-slugify==0.1.1
 
-markdown==2.4.1
+creole==1.2

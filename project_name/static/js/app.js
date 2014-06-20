@@ -20,7 +20,7 @@ var fileupload = function () {
                 }
                 for (var i=0; i<data.result.uploads.length; i++) {
                     var f = data.result.uploads[i];
-                    markdown += "![" + f.filename + "](" + f.download_url + ")\n\n";
+                    markdown += "{{" + f.download_url + "|" + f.filename + "}}\n\n";
                 }
 
                 $textarea.val(content.substring(0, start) + markdown + content.substring(end, content.length));
