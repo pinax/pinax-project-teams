@@ -41,6 +41,23 @@
                     </form>
                 {% endif %}
             </div>
+
+            <h4>Managers</h4>
+            {% for membership in team.managers %}
+                <a href="{% url 'profiles_detail' membership.user.username %}">{{ membership.user }}</a>
+                {% if not forloop.last %}&bull;{% endif %}
+            {% empty %}
+                <p>None.</p>
+            {% endfor %}
+
+            <h4>Members</h4>
+            {% for membership in team.members %}
+                <a href="{% url 'profiles_detail' membership.user.username %}">{{ membership.user }}</a>
+                {% if not forloop.last %}&bull;{% endif %}
+            {% empty %}
+                <p>None.</p>
+            {% endfor %}
+
         </div>
         <div class="col-md-8"
             {% if user.is_staff or state == "manager" %}
