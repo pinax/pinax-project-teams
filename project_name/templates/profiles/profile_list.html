@@ -1,10 +1,15 @@
 {% extends "site_base.html" %}
 
-{% block head_title %}Profiles{% endblock %}
+{% block head_title %}People{% endblock %}
 
 {% load thumbnail %}
 
 {% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>People</h1>
+        </div>
+    </div>
     <div class="row">
         {% for profile in profiles %}
             <div class="col-md-3">
