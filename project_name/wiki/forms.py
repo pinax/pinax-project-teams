@@ -19,12 +19,12 @@ class RevisionForm(forms.ModelForm):
             self.fields["message"].initial = "initial revision"
 
     def clean_content(self):
-        if self.cleaned_data["content"] == self.revision.content:
+        if self.revision and self.cleaned_data["content"] == self.revision.content:
             raise forms.ValidationError("You made no stinking changes")
         return self.cleaned_data["content"]
 
     def clean(self):
-        if self.cleaned_data.get("revision_pk") != self.revision.pk:
+        if self.revision and self.cleaned_data.get("revision_pk") != self.revision.pk:
             raise forms.ValidationError("Someone edited this before you")
         return self.cleaned_data
 
