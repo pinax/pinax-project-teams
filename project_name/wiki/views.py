@@ -43,7 +43,7 @@ def edit(request, slug, wiki_lookup, *args, **kwargs):
         if not hookset.can_edit_page(page, request.user):
             raise Http404()
     if request.method == "POST":
-        form = RevisionForm(request.POST, instance=rev)
+        form = RevisionForm(request.POST, revision=rev)
         if form.is_valid():
             if page.pk is None:
                 page.save()
@@ -55,13 +55,7 @@ def edit(request, slug, wiki_lookup, *args, **kwargs):
             revision.save()
             return redirect(hookset.page_url(wiki, slug))
     else:
-        if rev:
-            form = RevisionForm(instance=rev)
-        else:
-            form = RevisionForm(initial={
-                "content": "add content and create a new page",
-                "message": "initial revision"
-            })
+        form = RevisionForm(revision=rev)
 
     return render(request, "wiki/edit.html", {
         "form": form,
