@@ -5,10 +5,15 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.auth.models import User
 
-from .models import Membership, Team
+from .models import Membership, Team, create_slug
 
 
 class TeamForm(forms.ModelForm):
+
+    def clean_name(self):
+        if Team.objects.filter(slug=create_slug(self.cleaned_data["name"])).exists():
+            raise forms.ValidationError("Team with this name already exists")
+        return self.cleaned_data["name"]
 
     class Meta:
         model = Team

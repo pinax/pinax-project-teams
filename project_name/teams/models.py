@@ -17,6 +17,10 @@ def avatar_upload(instance, filename):
     return os.path.join("avatars", filename)
 
 
+def create_slug(name):
+    return slugify(name)[:50]
+
+
 class Team(models.Model):
 
     ACCESS_OPEN = "open"
@@ -81,7 +85,7 @@ class Team(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.slug = slugify(self.name)[:50]
+            self.slug = create_slug(self.name)
         self.full_clean()
         super(Team, self).save(*args, **kwargs)
 
