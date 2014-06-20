@@ -50,17 +50,24 @@ class Team(models.Model):
         except Membership.DoesNotExist:
             return None
 
+    @property
     def applicants(self):
         return self.memberships.filter(state=Membership.STATE_APPLIED)
 
+    @property
     def invitees(self):
         return self.memberships.filter(state=Membership.STATE_INVITED)
 
+    @property
     def members(self):
         return self.memberships.filter(state=Membership.STATE_MEMBER)
 
+    @property
     def managers(self):
         return self.memberships.filter(state=Membership.STATE_MANAGER)
+
+    def is_manager(self, user):
+        return self.managers.filter(user=user).exists()
 
     def is_on_team(self, user):
         return self.memberships.exclude(state__in=[

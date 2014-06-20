@@ -1,4 +1,4 @@
-from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed
+from django.http import Http404, HttpResponseRedirect, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
@@ -73,6 +73,18 @@ class TeamUpdateView(LoginRequiredMixin, UpdateView):
 
     form_class = TeamForm
     model = Team
+
+    def get(self, request, *args, **kwargs):
+        response = super(TeamUpdateView, self).get(request, *args, **kwargs)
+        if not self.object.is_manager(request.user):
+            response = HttpResponseForbidden()
+        return response
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.object.is_manager(request.user):
+            return HttpResponseForbidden()
+        return super(TeamUpdateView, self).post(request, *args, **kwargs)
 
 
 class TeamListView(ListView):
@@ -155,7 +167,7 @@ def team_apply(request, slug):
         membership, created = Membership.objects.get_or_create(team=team, user=request.user)
         membership.state = Membership.STATE_APPLIED
         membership.save()
-        managers = [m.user.email for m in team.managers()]
+        managers = [m.user.email for m in team.managers]
         # send_email(managers, "teams_user_applied", context={
         #     "team": team,
         #     "user": request.user
