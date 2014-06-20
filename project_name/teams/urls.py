@@ -16,6 +16,7 @@ urlpatterns = patterns(
     url(r"^(?P<slug>[\w\-]+)/leave/$", "team_leave", name="team_leave"),
     url(r"^(?P<slug>[\w\-]+)/apply/$", "team_apply", name="team_apply"),
     url(r"^(?P<slug>[\w\-]+)/edit/$", TeamUpdateView.as_view(), name="team_edit"),
+    url(r"^(?P<slug>[\w\-]+)/manage/$", "team_manage", name="team_manage"),
 
     # membership specific
     url(r"^promote/(?P<pk>\d+)/$", "team_promote", name="team_promote"),

@@ -100,6 +100,22 @@ def team_detail(request, slug):
     if team.access == Team.ACCESS_INVITATION and state is None and not request.user.is_staff:
         raise Http404()
 
+    return render(request, "teams/team_detail.html", {
+        "team": team,
+        "state": state,
+        "can_join": can_join(team, request.user),
+        "can_leave": can_leave(team, request.user),
+        "can_apply": can_apply(team, request.user),
+    })
+
+
+@login_required
+def team_manage(request, slug):
+    team = get_object_or_404(Team, slug=slug)
+    state = team.get_state_for_user(request.user)
+    if state != Membership.STATE_MANAGER and not request.user.is_staff:
+        raise Http404()
+
     if can_invite(team, request.user):
         if request.method == "POST":
             form = TeamInvitationForm(request.POST, team=team)
@@ -113,13 +129,9 @@ def team_detail(request, slug):
     else:
         form = None
 
-    return render(request, "teams/team_detail.html", {
+    return render(request, "teams/team_manage.html", {
         "team": team,
-        "state": state,
         "invite_form": form,
-        "can_join": can_join(team, request.user),
-        "can_leave": can_leave(team, request.user),
-        "can_apply": can_apply(team, request.user),
     })
 
 
