@@ -9,10 +9,10 @@ from django.views.decorators.http import require_POST
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 
+from account.decorators import login_required
 from account.mixins import LoginRequiredMixin
 
 # from symposion.utils.mail import send_email
