@@ -1,0 +1,65 @@
+{% extends "site_base.html" %}
+
+{% load bootstrap %}
+{% load thumbnail %}
+
+{% block head_title %}{{ team.name }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-4">
+            {% if team.avatar %}
+                <img class="img-polaroid avatar hidden-phone" src="{% thumbnail team.avatar 160x160 crop %}" alt="{{ team.name }}">
+            {% endif %}
+
+            <h2>{{ team.name }}</h2>
+            {% if role %}<p><span class="label label-default">{{ role }}</span></p>{% endif %}
+
+            {% if team.description %}<p>{{ team.description }}</p>{% endif %}
+
+            {% if state == "invited" %}<p>You have been invited to join this team. Click <b>join</b> below to accept.</p>{% endif %}
+
+            <div>
+                {% if can_join %}
+                    <form method="post" action="{% url 'team_join' team.slug %}">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary" value="join">
+                    </form>
+                {% endif %}
+
+                {% if can_leave %}
+                    <form method="post" action="{% url 'team_leave' team.slug %}">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-default" value="leave">
+                    </form>
+                {% endif %}
+
+                {% if can_apply %}
+                    <form method="post" action="{% url 'team_apply' team.slug %}">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-primary" value="apply">
+                    </form>
+                {% endif %}
+            </div>
+
+            <h4>Managers</h4>
+            {% for membership in team.managers %}
+                <a href="{% url 'profiles_detail' membership.user.username %}">{{ membership.user }}</a>
+                {% if not forloop.last %}&bull;{% endif %}
+            {% empty %}
+                <p>None.</p>
+            {% endfor %}
+
+            <h4>Members</h4>
+            {% for membership in team.members %}
+                <a href="{% url 'profiles_detail' membership.user.username %}">{{ membership.user }}</a>
+                {% if not forloop.last %}&bull;{% endif %}
+            {% empty %}
+                <p>None.</p>
+            {% endfor %}
+
+        </div>
+        <div class="col-md-8">
+        </div>
+    </div>
+{% endblock %}
