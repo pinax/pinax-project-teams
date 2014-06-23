@@ -130,9 +130,12 @@ class Team(models.Model):
         return self.acceptances.filter(user=user).exists()
 
     def add_user(self, user, role):
+        state = Membership.STATE_AUTO_JOINED
+        if self.manager_access == Team.MANAGER_ACCESS_INVITE:
+            state = Membership.STATE_INVITED
         membership, _ = self.memberships.get_or_create(
             user=user,
-            defaults={"role": role, "state": Membership.STATE_AUTO_JOINED}
+            defaults={"role": role, "state": state}
         )
         return membership
 
@@ -140,7 +143,7 @@ class Team(models.Model):
         invite = JoinInvitation.invite(from_user, to_email)
         membership, _ = self.memberships.get_or_create(
             invite=invite,
-            defaults={"role": role}
+            defaults={"role": role, "state": Membership.STATE_INVITED}
         )
         return membership
 
@@ -238,9 +241,12 @@ class Membership(models.Model):
                 return True
         return False
 
-    def accept_join_invitation(self):
+    def joined(self):
         self.user = self.invite.to_user
-        self.state = Membership.STATE_ACCEPTED
+        if self.team.manager_access == Team.MANAGER_ACCESS_ADD:
+            self.state = Membership.STATE_AUTO_JOINED
+        else:
+            self.state = Membership.STATE_INVITED
         self.save()
 
     def status(self):

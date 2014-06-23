@@ -17,4 +17,4 @@ def handle_team_save(sender, **kwargs):
 @receiver([invite_accepted, joined_independently])
 def handle_invite_used(sender, invitation, **kwargs):
     for membership in invitation.memberships.all():
-        membership.accept_join_invitation()
+        membership.joined()
