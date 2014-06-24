@@ -65,23 +65,24 @@ class ManagerAddMemberOpenTests(BaseTeamTests):
     MANAGER_ACCESS = Team.MANAGER_ACCESS_ADD
     MEMBER_ACCESS = Team.MEMBER_ACCESS_OPEN
 
-    def test_non_manager_adds_on_site_user(self):
-        pass
+    def test_can_join_non_member(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        self.assertTrue(team.can_join(paltman))
 
-    def test_manager_adds_on_site_user(self):
-        pass
+    def test_can_join_invited(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        membership = team.add_user(paltman, Membership.ROLE_MEMBER)
+        membership.state = Membership.STATE_INVITED
+        membership.save()
+        self.assertTrue(team.can_join(User.objects.get(username="paltman")))
 
-    def test_non_manager_adds_off_site_user(self):
-        pass
-
-    def test_manager_adds_off_site_user(self):
-        pass
-
-    def test_non_member_attempts_to_join(self):
-        pass
-
-    def test_non_member_applies_to_join(self):
-        pass
+    def test_can_join_declined(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        team.add_user(paltman, Membership.STATE_DECLINED)
+        self.assertFalse(team.can_join(paltman))
 
 
 class ManagerAddMemberApplicationTests(BaseTeamTests):
@@ -89,47 +90,11 @@ class ManagerAddMemberApplicationTests(BaseTeamTests):
     MANAGER_ACCESS = Team.MANAGER_ACCESS_ADD
     MEMBER_ACCESS = Team.MEMBER_ACCESS_APPLICATION
 
-    def test_non_manager_adds_on_site_user(self):
-        pass
-
-    def test_manager_adds_on_site_user(self):
-        pass
-
-    def test_non_manager_adds_off_site_user(self):
-        pass
-
-    def test_manager_adds_off_site_user(self):
-        pass
-
-    def test_non_member_attempts_to_join(self):
-        pass
-
-    def test_non_member_applies_to_join(self):
-        pass
-
 
 class ManagerAddMemberInvitationTests(BaseTeamTests):
 
     MANAGER_ACCESS = Team.MANAGER_ACCESS_ADD
     MEMBER_ACCESS = Team.MEMBER_ACCESS_INVITATION
-
-    def test_non_manager_adds_on_site_user(self):
-        pass
-
-    def test_manager_adds_on_site_user(self):
-        pass
-
-    def test_non_manager_adds_off_site_user(self):
-        pass
-
-    def test_manager_adds_off_site_user(self):
-        pass
-
-    def test_non_member_attempts_to_join(self):
-        pass
-
-    def test_non_member_applies_to_join(self):
-        pass
 
 
 class ManagerInviteMemberOpenTests(BaseTeamTests):
@@ -137,68 +102,14 @@ class ManagerInviteMemberOpenTests(BaseTeamTests):
     MANAGER_ACCESS = Team.MANAGER_ACCESS_INVITE
     MEMBER_ACCESS = Team.MEMBER_ACCESS_OPEN
 
-    def test_non_manager_adds_on_site_user(self):
-        pass
-
-    def test_manager_adds_on_site_user(self):
-        pass
-
-    def test_non_manager_adds_off_site_user(self):
-        pass
-
-    def test_manager_adds_off_site_user(self):
-        pass
-
-    def test_non_member_attempts_to_join(self):
-        pass
-
-    def test_non_member_applies_to_join(self):
-        pass
-
 
 class ManagerInviteMemberApplicationTests(BaseTeamTests):
 
     MANAGER_ACCESS = Team.MANAGER_ACCESS_INVITE
     MEMBER_ACCESS = Team.MEMBER_ACCESS_APPLICATION
 
-    def test_non_manager_adds_on_site_user(self):
-        pass
-
-    def test_manager_adds_on_site_user(self):
-        pass
-
-    def test_non_manager_adds_off_site_user(self):
-        pass
-
-    def test_manager_adds_off_site_user(self):
-        pass
-
-    def test_non_member_attempts_to_join(self):
-        pass
-
-    def test_non_member_applies_to_join(self):
-        pass
-
 
 class ManagerInviteMemberInvitationTests(BaseTeamTests):
 
     MANAGER_ACCESS = Team.MANAGER_ACCESS_INVITE
     MEMBER_ACCESS = Team.MEMBER_ACCESS_INVITATION
-
-    def test_non_manager_adds_on_site_user(self):
-        pass
-
-    def test_manager_adds_on_site_user(self):
-        pass
-
-    def test_non_manager_adds_off_site_user(self):
-        pass
-
-    def test_manager_adds_off_site_user(self):
-        pass
-
-    def test_non_member_attempts_to_join(self):
-        pass
-
-    def test_non_member_applies_to_join(self):
-        pass

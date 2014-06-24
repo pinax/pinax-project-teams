@@ -64,8 +64,6 @@ class Team(models.Model):
             return True
         elif state == Membership.STATE_INVITED:
             return True
-        elif user.is_staff and state is None:
-            return True
         else:
             return False
 
