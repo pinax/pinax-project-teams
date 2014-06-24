@@ -100,7 +100,7 @@ class Team(models.Model):
 
     @property
     def acceptances(self):
-        return self.memberships.filter(state=Membership.STATE_ACCEPTED)
+        return self.memberships.filter(state__in=[Membership.STATE_ACCEPTED, Membership.STATE_AUTO_JOINED])
 
     @property
     def members(self):
