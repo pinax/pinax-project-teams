@@ -197,9 +197,22 @@ def team_invite(request, slug):
         else:
             membership = team.add_user(user_or_email, role)
         data = {
-            "html": render_to_string("teams/_invite_form.html", {"invite_form": TeamInviteUserForm(team=team), "team": team}, context_instance=RequestContext(request)),
+            "html": render_to_string(
+                "teams/_invite_form.html",
+                {
+                    "invite_form": TeamInviteUserForm(team=team),
+                    "team": team
+                },
+                context_instance=RequestContext(request)
+            ),
             "append-fragments": {
-                ".memberships": render_to_string("teams/_membership.html", {"membership": membership}, context_instance=RequestContext(request))
+                ".memberships": render_to_string(
+                    "teams/_membership.html",
+                    {
+                        "membership": membership
+                    },
+                    context_instance=RequestContext(request)
+                )
             }
         }
     else:
