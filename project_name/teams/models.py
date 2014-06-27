@@ -76,10 +76,6 @@ class Team(models.Model):
         state = self.state_for(user)
         return self.member_access == Team.MEMBER_ACCESS_APPLICATION and state is None
 
-    def can_invite(self, user):
-        state = self.state_for(user)
-        return self.member_access == Team.MEMBER_ACCESS_INVITATION and (state == Membership.STATE_MANAGER or user.is_staff)
-
     @property
     def applicants(self):
         return self.memberships.filter(state=Membership.STATE_APPLIED)
