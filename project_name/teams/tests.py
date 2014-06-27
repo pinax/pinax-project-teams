@@ -55,6 +55,16 @@ class TeamTests(BaseTeamTests):
         team.add_user(other_user, Membership.ROLE_MEMBER)
         self.assertTrue(team.is_on_team(other_user))
 
+    def test_member_can_leave(self):
+        team = self._create_team()
+        other_user = User.objects.create_user(username="paltman")
+        team.add_user(other_user, Membership.ROLE_MEMBER)
+        self.assertTrue(team.can_leave(other_user))
+
+    def test_manager_cannot_leave(self):
+        team = self._create_team()
+        self.assertFalse(team.can_leave(self.user))
+
     def test_owner_is_member(self):
         team = self._create_team()
         self.assertTrue(team.is_on_team(self.user))
@@ -64,6 +74,17 @@ class ManagerAddMemberOpenTests(BaseTeamTests):
 
     MANAGER_ACCESS = Team.MANAGER_ACCESS_ADD
     MEMBER_ACCESS = Team.MEMBER_ACCESS_OPEN
+
+    def test_cannot_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        team.add_user(paltman, Membership.ROLE_MEMBER)
+        self.assertFalse(team.can_apply(paltman))
+
+    def test_can_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        self.assertFalse(team.can_apply(paltman))
 
     def test_can_join_non_member(self):
         team = self._create_team()
@@ -90,6 +111,17 @@ class ManagerAddMemberApplicationTests(BaseTeamTests):
     MANAGER_ACCESS = Team.MANAGER_ACCESS_ADD
     MEMBER_ACCESS = Team.MEMBER_ACCESS_APPLICATION
 
+    def test_cannot_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        team.add_user(paltman, Membership.ROLE_MEMBER)
+        self.assertFalse(team.can_apply(paltman))
+
+    def test_can_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        self.assertTrue(team.can_apply(paltman))
+
     def test_can_join_non_member(self):
         team = self._create_team()
         paltman = User.objects.create_user(username="paltman")
@@ -115,6 +147,17 @@ class ManagerAddMemberInvitationTests(BaseTeamTests):
     MANAGER_ACCESS = Team.MANAGER_ACCESS_ADD
     MEMBER_ACCESS = Team.MEMBER_ACCESS_INVITATION
 
+    def test_cannot_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        team.add_user(paltman, Membership.ROLE_MEMBER)
+        self.assertFalse(team.can_apply(paltman))
+
+    def test_can_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        self.assertFalse(team.can_apply(paltman))
+
     def test_can_join_non_member(self):
         team = self._create_team()
         paltman = User.objects.create_user(username="paltman")
@@ -139,6 +182,17 @@ class ManagerInviteMemberOpenTests(BaseTeamTests):
 
     MANAGER_ACCESS = Team.MANAGER_ACCESS_INVITE
     MEMBER_ACCESS = Team.MEMBER_ACCESS_OPEN
+
+    def test_cannot_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        team.add_user(paltman, Membership.ROLE_MEMBER)
+        self.assertFalse(team.can_apply(paltman))
+
+    def test_can_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        self.assertFalse(team.can_apply(paltman))
 
     def test_can_join_non_member(self):
         team = self._create_team()
@@ -167,6 +221,17 @@ class ManagerInviteMemberApplicationTests(BaseTeamTests):
     MANAGER_ACCESS = Team.MANAGER_ACCESS_INVITE
     MEMBER_ACCESS = Team.MEMBER_ACCESS_APPLICATION
 
+    def test_cannot_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        team.add_user(paltman, Membership.ROLE_MEMBER)
+        self.assertFalse(team.can_apply(paltman))
+
+    def test_can_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        self.assertTrue(team.can_apply(paltman))
+
     def test_can_join_non_member(self):
         team = self._create_team()
         paltman = User.objects.create_user(username="paltman")
@@ -193,6 +258,17 @@ class ManagerInviteMemberInvitationTests(BaseTeamTests):
 
     MANAGER_ACCESS = Team.MANAGER_ACCESS_INVITE
     MEMBER_ACCESS = Team.MEMBER_ACCESS_INVITATION
+
+    def test_cannot_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        team.add_user(paltman, Membership.ROLE_MEMBER)
+        self.assertFalse(team.can_apply(paltman))
+
+    def test_can_apply(self):
+        team = self._create_team()
+        paltman = User.objects.create_user(username="paltman")
+        self.assertFalse(team.can_apply(paltman))
 
     def test_can_join_non_member(self):
         team = self._create_team()
