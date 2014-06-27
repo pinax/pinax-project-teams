@@ -1,3 +1,5 @@
 dev.db
 *.pyc
 site_media/
+htmlcov
+.coverage
