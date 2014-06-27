@@ -1,0 +1,8 @@
+[run]
+source = project_name
+omit = project_name/wsgi.py,project_name/urls.py,project_name/startup.py,project_name/settings*
+branch = true
+
+[report]
+omit = project_name/wsgi.py,project_name/urls.py,project_name/startup.py,project_name/settings*
+
