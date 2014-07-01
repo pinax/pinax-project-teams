@@ -10,6 +10,10 @@
         <div class="col-md-4">
             {% if team.avatar %}
                 <img class="img-polaroid avatar hidden-phone" src="{% thumbnail team.avatar 160x160 crop %}" alt="{{ team.name }}">
+            {% else %}
+                <div class="default-avatar-big">
+                    <i class="fa fa-group fa-5x"></i>
+                </div>
             {% endif %}
 
             <h2>{{ team.name }}</h2>
@@ -18,7 +22,7 @@
             {% if team.description %}<p>{{ team.description }}</p>{% endif %}
 
             {% include "teams/_team_actions.html" %}
-            
+
             <h4>Owners</h4>
             {% for membership in team.owners %}
                 <a href="{% url 'profiles_detail' membership.user.username %}">{{ membership.user }}</a>
