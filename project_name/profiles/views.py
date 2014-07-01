@@ -18,7 +18,7 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
         return self.request.user.get_profile()
 
     def get_success_url(self):
-        return reverse("profiles_edit")
+        return reverse("profiles_list")
 
     def form_valid(self, form):
         response = super(ProfileEditView, self).form_valid(form)
