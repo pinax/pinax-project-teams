@@ -1,3 +1,13 @@
+<div>
+    {% if role == "owner" or role == "manager" %}
+        <a class="btn btn-default btn-xs" href="{% url 'team_manage' team.slug %}">manage</a>
+    {% endif %}
+    {% if role == "owner" %}
+        <a class="btn btn-default btn-xs" href="{% url 'team_edit' team.slug %}">edit</a>
+    {% endif %}
+</div>
+
+
 {% if state == "invited" %}
     <p>
         You have been invited to join this team.
