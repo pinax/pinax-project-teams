@@ -11,7 +11,13 @@ def handle_team_save(sender, **kwargs):
     created = kwargs.pop("created")
     team = kwargs.pop("instance")
     if created:
-        team.add_user(team.creator, Membership.ROLE_OWNER)
+        team.memberships.get_or_create(
+            user=team.creator,
+            defaults={
+                "role": Membership.ROLE_OWNER,
+                "state": Membership.STATE_AUTO_JOINED
+            }
+        )
 
 
 @receiver([invite_accepted, joined_independently])
