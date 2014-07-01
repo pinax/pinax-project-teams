@@ -146,24 +146,6 @@ def team_apply(request, slug):
 
 @login_required
 @require_POST
-def team_promote(request, pk):
-    membership = get_object_or_404(Membership, pk=pk)
-    if membership.promote(by=request.user):
-        messages.success(request, "Promoted to manager.")
-    return redirect("team_detail", slug=membership.team.slug)
-
-
-@login_required
-@require_POST
-def team_demote(request, pk):
-    membership = get_object_or_404(Membership, pk=pk)
-    if membership.demote(by=request.user):
-        messages.success(request, "Demoted from manager.")
-    return redirect("team_detail", slug=membership.team.slug)
-
-
-@login_required
-@require_POST
 def team_accept(request, pk):
     membership = get_object_or_404(Membership, pk=pk)
     if membership.accept(by=request.user):
@@ -195,6 +177,16 @@ def team_invite(request, slug):
             membership = team.invite_user(request.user, user_or_email, role)
         else:
             membership = team.add_user(user_or_email, role)
+        if membership.state == Membership.STATE_APPLIED:
+            fragment_class = ".applicants"
+        elif membership.state == Membership.STATE_INVITED:
+            fragment_class = ".invitees"
+        elif membership.state in (Membership.STATE_AUTO_JOINED, Membership.STATE_ACCEPTED):
+            fragment_class = {
+                Membership.ROLE_OWNER: ".owners",
+                Membership.ROLE_MANAGER: ".managers",
+                Membership.ROLE_MEMBER: ".members"
+            }[membership.role]
         data = {
             "html": render_to_string(
                 "teams/_invite_form.html",
@@ -205,7 +197,7 @@ def team_invite(request, slug):
                 context_instance=RequestContext(request)
             ),
             "append-fragments": {
-                ".memberships": render_to_string(
+                fragment_class: render_to_string(
                     "teams/_membership.html",
                     {
                         "membership": membership

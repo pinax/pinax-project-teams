@@ -22,8 +22,6 @@ urlpatterns = patterns(
     url(r"^(?P<slug>[\w\-]+)/ac/users-to-invite/$", "autocomplete_users", name="team_autocomplete_users"),
     url(r"^(?P<slug>[\w\-]+)/invite-user/$", "team_invite", name="team_invite"),
 
-    url(r"^promote/(?P<pk>\d+)/$", "team_promote", name="team_promote"),
-    url(r"^demote/(?P<pk>\d+)/$", "team_demote", name="team_demote"),
     url(r"^accept/(?P<pk>\d+)/$", "team_accept", name="team_accept"),
     url(r"^reject/(?P<pk>\d+)/$", "team_reject", name="team_reject"),
 )

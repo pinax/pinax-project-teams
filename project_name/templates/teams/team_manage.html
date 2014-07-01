@@ -24,56 +24,44 @@
         </div>
         <div class="col-md-8">
             {% if user.is_staff or role == "manager" or role == "owner" %}
+                {% if team.owners %}
+                    <h2>Owners</h2>
+                    <table class="table table-striped owners">
+                        {% for membership in team.owners %}
+                            {% include "teams/_membership.html" %}
+                        {% endfor %}
+                    </table>
+                {% endif %}
                 {% if team.managers %}
                     <h2>Managers</h2>
-                    <table class="table table-striped">
+                    <table class="table table-striped managers">
                         {% for membership in team.managers %}
-                            <tr>
-                                <td>{{ membership.user.email }}{% if user == membership.user %} <span class="label label-info">you</span>{% endif %}</td>
-                                <td>
-                                    <form style="margin: 0 5px;" method="post" action="{% url 'team_demote' membership.pk %}">{% csrf_token %}<button type="submit" class="btn btn-danger btn-xs">demote</button></form>
-                                </td>
-                            </tr>
+                            {% include "teams/_membership.html" %}
                         {% endfor %}
                     </table>
                 {% endif %}
                 {% if team.members %}
-                    <h2>Team Members</h2>
-                    <table class="table table-striped">
+                    <h2>Members</h2>
+                    <table class="table table-striped members">
                         {% for membership in team.members %}
-                            <tr>
-                                <td>{{ membership.user.email }}{% if user == membership.user %} <span class="label label-info">you</span>{% endif %}</td>
-                                <td>
-                                    <form style="margin: 0 5px;" method="post" action="{% url 'team_promote' membership.pk %}">{% csrf_token %}<button type="submit" class="btn btn-success btn-xs">promote</button></form>
-                                </td>
-                            </tr>
+                            {% include "teams/_membership.html" %}
                         {% endfor %}
                     </table>
                 {% endif %}
                 {% if team.applicants and team.member_access == "application" %}
                     <h2>Applicants</h2>
-                    <table class="table table-striped">
+                    <table class="table table-striped applicants">
                         {% for membership in team.applicants %}
-                            <tr>
-                                <td>{{ membership.user.email }}</td>
-                                <td>
-                                    <form style="margin: 0 5px; float: left;" method="post" action="{% url 'team_accept' membership.pk %}">{% csrf_token %}<button type="submit" class="btn btn-success btn-xs">accept</button></form>
-                                    <form style="margin: 0 5px; float: left;" method="post" action="{% url 'team_reject' membership.pk %}">{% csrf_token %}<button type="submit" class="btn btn-danger btn-xs">reject</button></form>
-                                </td>
-                            </tr>
+                            {% include "teams/_membership.html" %}
                         {% endfor %}
                     </table>
                 {% endif %}
-                {% if team.invitees %}
-                    <h2>Invitees</h2>
-                    <table class="table table-striped">
-                        {% for membership in team.invitees %}
-                            <tr>
-                                <td>{{ membership.user.email }}</td>
-                            </tr>
-                        {% endfor %}
-                    </table>
-                {% endif %}
+                <h2>Invitees</h2>
+                <table class="table table-striped invitees">
+                    {% for membership in team.invitees %}
+                        {% include "teams/_membership.html" %}
+                    {% endfor %}
+                </table>
                 {% if invite_form %}
                     {% include "teams/_invite_form.html" %}
                 {% endif %}
