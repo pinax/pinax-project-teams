@@ -22,6 +22,12 @@ class Wiki(models.Model):
     object_id = models.IntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
 
+    def latest_edits(self):
+        return Revision.objects.filter(page__wiki=self).order_by("-created_at")
+
+    class Meta:
+        unique_together = [("content_type", "object_id")]
+
 
 class Page(models.Model):
     wiki = models.ForeignKey(Wiki, related_name="pages")  # @@@ Could make

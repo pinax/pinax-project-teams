@@ -2,6 +2,7 @@
 
 {% load bootstrap %}
 {% load thumbnail %}
+{% load wiki_tags %}
 
 {% block head_title %}{{ team.name }}{% endblock %}
 
@@ -48,7 +49,7 @@
             {% endfor %}
 
         </div>
-        <div class="col-md-8">
-        </div>
+        {% wiki_for team as wiki %}
+        {% include "_latest_wikis.html" %}
     </div>
 {% endblock %}

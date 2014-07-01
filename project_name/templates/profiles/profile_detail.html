@@ -1,5 +1,7 @@
 {% extends "site_base.html" %}
 
+{% load wiki_tags %}
+
 {% block head_title %}{{ profile.display_name }}{% endblock %}
 
 {% load thumbnail %}
@@ -72,5 +74,7 @@
                 {% endfor %}
             </div>
         </div>
+        {% wiki_for profile.user as wiki %}
+        {% include "_latest_wikis.html" %}
     </div>
 {% endblock %}
