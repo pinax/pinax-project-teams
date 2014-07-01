@@ -36,7 +36,12 @@
     <div class="row">
         <div class="col-md-6">
             <form class="form profile-form" action="" method="POST" enctype="multipart/form-data">
-                <legend>Create Team</legend>
+                {% if team.pk %}
+                    <legend>Edit Team</legend>
+                {% else %}
+                    <legend>Create Team</legend>
+                {% endif %}
+
                 {% csrf_token %}
 
                 {{ form.name|bootstrap }}
@@ -62,6 +67,11 @@
                 {{ form.manager_access|bootstrap }}
 
                 <button type="submit" class="btn btn-primary">Save</button>
+                {% if team.pk %}
+                    <a class="btn btn-default" href="{% url 'team_detail' team.slug %}">Cancel</a>
+                {% else %}
+                    <a class="btn btn-default" href="{% url 'team_list' %}">Cancel</a>
+                {% endif %}
             </form>
         </div>
     </div>
