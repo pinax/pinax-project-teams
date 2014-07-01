@@ -42,6 +42,14 @@
                 {% endif %}
             </div>
 
+            <h4>Owners</h4>
+            {% for membership in team.owners %}
+                <a href="{% url 'profiles_detail' membership.user.username %}">{{ membership.user }}</a>
+                {% if not forloop.last %}&bull;{% endif %}
+            {% empty %}
+                <p>None.</p>
+            {% endfor %}
+
             <h4>Managers</h4>
             {% for membership in team.managers %}
                 <a href="{% url 'profiles_detail' membership.user.username %}">{{ membership.user }}</a>
