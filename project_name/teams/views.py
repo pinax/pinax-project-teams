@@ -60,12 +60,11 @@ class TeamListView(ListView):
 @login_required
 def team_detail(request, slug):
     team = get_object_or_404(Team, slug=slug)
-    template_name = "teams/details/{0}.html".format(team.member_access)
     state = team.state_for(request.user)
     role = team.role_for(request.user)
     if team.member_access == Team.MEMBER_ACCESS_INVITATION and state is None:
         raise Http404()
-    return render(request, template_name, {
+    return render(request, "teams/team_detail.html", {
         "team": team,
         "state": state,
         "role": role,
