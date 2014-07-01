@@ -10,7 +10,8 @@ from .models import Membership, Team, create_slug
 class TeamForm(forms.ModelForm):
 
     def clean_name(self):
-        if Team.objects.filter(slug=create_slug(self.cleaned_data["name"])).exists():
+        slug = create_slug(self.cleaned_data["name"])
+        if self.instance.pk is None and Team.objects.filter(slug=slug).exists():
             raise forms.ValidationError("Team with this name already exists")
         return self.cleaned_data["name"]
 
