@@ -1,40 +1,10 @@
 from django.dispatch import receiver
-from django.db.models.signals import post_save
-
-from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 
 from account.signals import password_changed
 from account.signals import user_sign_up_attempt, user_signed_up
 from account.signals import user_login_attempt, user_logged_in
 
 from eventlog.models import log
-
-from project_name.teams.models import Team
-from project_name.wiki.models import Wiki
-
-
-def create_wiki(obj):
-    Wiki.objects.create(
-        content_type=ContentType.objects.get_for_model(obj),
-        object_id=obj.pk
-    )
-
-
-@receiver(post_save, sender=User)
-def handle_user_save(sender, **kwargs):
-    created = kwargs.pop("created")
-    obj = kwargs.pop("instance")
-    if created:
-        create_wiki(obj)
-
-
-@receiver(post_save, sender=Team)
-def handle_team_save(sender, **kwargs):
-    created = kwargs.pop("created")
-    obj = kwargs.pop("instance")
-    if created:
-        create_wiki(obj)
 
 
 @receiver(user_logged_in)

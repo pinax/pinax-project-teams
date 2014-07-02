@@ -136,12 +136,12 @@ INSTALLED_APPS = [
     "metron",
     "easy_thumbnails",
     "kaleo",
+    "wiki",
 
     # project
     "project_name",
     "project_name.profiles",
-    "project_name.teams",
-    "project_name.wiki"
+    "project_name.teams"
 ]
 
 # A sample logging configuration. The only tangible logging
@@ -189,6 +189,10 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 
 WIKI_HOOKSET = "project_name.hooks.ProjectWikiHookset"
+WIKI_BINDERS = [
+    "project_name.binders.UserBinder",
+    "project_name.binders.TeamBinder"
+]
 
 AUTHENTICATION_BACKENDS = [
     "account.auth_backends.UsernameAuthenticationBackend",
