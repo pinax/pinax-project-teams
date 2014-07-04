@@ -4,8 +4,8 @@ from django.conf.urls.static import static
 
 from django.contrib import admin
 
-from project_name.views import homepage
-from project_name.profiles.views import ProfileDetailView, ProfileEditView, ProfileListView
+from .views import homepage
+from .profiles.views import ProfileDetailView, ProfileEditView, ProfileListView
 
 
 urlpatterns = patterns(

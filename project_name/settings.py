@@ -108,10 +108,10 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-ROOT_URLCONF = "project_name.urls"
+ROOT_URLCONF = "{{ project_name }}.urls"
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = "project_name.wsgi.application"
+WSGI_APPLICATION = "{{ project_name }}.wsgi.application"
 
 TEMPLATE_DIRS = [
     os.path.join(PACKAGE_ROOT, "templates"),
@@ -140,8 +140,8 @@ INSTALLED_APPS = [
     "wiki",
 
     # project
-    "project_name",
-    "project_name.profiles",
+    "{{ project_name }}",
+    "{{ project_name }}.profiles",
 ]
 
 # A sample logging configuration. The only tangible logging
@@ -188,10 +188,10 @@ ACCOUNT_LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 
-WIKI_HOOKSET = "project_name.hooks.ProjectWikiHookset"
+WIKI_HOOKSET = "{{ project_name }}.hooks.ProjectWikiHookset"
 WIKI_BINDERS = [
-    "project_name.binders.UserBinder",
-    "project_name.binders.TeamBinder"
+    "{{ project_name }}.binders.UserBinder",
+    "{{ project_name }}.binders.TeamBinder"
 ]
 
 AUTHENTICATION_BACKENDS = [
