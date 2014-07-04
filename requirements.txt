@@ -14,3 +14,4 @@ unicode-slugify==0.1.1
 creole==1.2
 kaleo==1.5
 pinax-wiki==0.1.1
+pinax-teams==0.1

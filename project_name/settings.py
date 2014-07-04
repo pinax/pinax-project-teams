@@ -136,12 +136,12 @@ INSTALLED_APPS = [
     "metron",
     "easy_thumbnails",
     "kaleo",
+    "teams",
     "wiki",
 
     # project
     "project_name",
     "project_name.profiles",
-    "project_name.teams"
 ]
 
 # A sample logging configuration. The only tangible logging

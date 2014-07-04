@@ -19,7 +19,7 @@ urlpatterns = patterns(
     url(r"^u/$", ProfileListView.as_view(), name="profiles_list"),
 
     url(r"^u/(?P<username>[\w\._-]+)/$", ProfileDetailView.as_view(), name="profiles_detail"),
-    url(r"^t/", include("project_name.teams.urls")),
+    url(r"^t/", include("teams.urls")),
 
     url(r"", include("wiki.urls"))
 )
