@@ -19,5 +19,3 @@ script:
   - coverage report
 after_success:
   - coveralls
-notifications:
-  slack: eldarion:4jGbNyrlkiqSf8nbh4G1Bgc3
