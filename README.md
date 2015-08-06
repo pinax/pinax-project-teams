@@ -1,6 +1,8 @@
 pinax-project-teams
 ===================
 
+[![Join us on Slack](http://slack.pinaxproject.com/badge.svg)](http://slack.pinaxproject.com/)
+
 a starter project that has account management with profiles and teams
 and basic collaborative content (wikis).
 
