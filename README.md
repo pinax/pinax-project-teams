@@ -1,26 +1,46 @@
-pinax-project-teams
-===================
+# Pinax Project Team Wiki
 
 [![Join us on Slack](http://slack.pinaxproject.com/badge.svg)](http://slack.pinaxproject.com/)
 
-a starter project that has account management with profiles and teams
-and basic collaborative content (wikis).
+a starter project that has account management with profiles and teams and basic
+collaborative content (wikis). It's a good demonstration of integration of [pinax-teams](http://github.com/pinax/pinax-teams/)
+and [pinax-wiki](http://github.com/pinax/pinax-wiki)
+
+The source code for this project template has moved to the [account branch](https://github.com/pinax/pinax-projects/tree/teams-wiki) of [pinax-projects](https://github.com/pinax/pinax-projects/).
+
+##### Prerequisites
+
+* pip
+* npm
 
 
+##### Getting Started
 
-Usage:
+You can get started with this project by doing the following:
 
-    django-admin.py startproject -e py,.coveragerc --template=https://github.com/pinax/pinax-project-teams/zipball/master <project_name>
+```
+pip install virtualenv
+virtualenv mysiteenv
+source mysiteenv/bin/activate
+pip install Django==1.8.3
+django-admin.py startproject --template=https://github.com/pinax/pinax-project/zipball/teams-wiki mysite -n webpack.config.js
+cd mysite
+chmod +x manage.py
+pip install -r requirements.txt
+npm install
+./manage.py migrate
+./manage.py loaddata sites
+./manage.py runserver
+```
 
+##### Static Media
 
-Getting Started:
+Static media is managed by `webpack`, and is configured out of the box to watch
+and rebuild on change by running:
 
-    pip install virtualenv
-    virtualenv mysiteenv
-    source mysiteenv/bin/activate
-    pip install Django==1.6.5
-    django-admin.py startproject -e py,.coveragerc --template=https://github.com/pinax/pinax-project-teams/zipball/master mysite
-    cd mysite
-    pip install -r requirements.txt
-    python manage.py syncdb
-    python manage.py runserver
+```
+npm run watch
+```
+
+We recommend running that in a separate terminal window than `manage.py runserver`
+if and when you are editing `js` or `less` files.
