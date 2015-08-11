@@ -6,7 +6,7 @@ a starter project that has account management with profiles and teams and basic
 collaborative content (wikis). It's a good demonstration of integration of [pinax-teams](http://github.com/pinax/pinax-teams/)
 and [pinax-wiki](http://github.com/pinax/pinax-wiki)
 
-The source code for this project template has moved to the [account branch](https://github.com/pinax/pinax-projects/tree/teams-wiki) of [pinax-projects](https://github.com/pinax/pinax-projects/).
+The source code for this project template has moved to the [teams-wiki branch](https://github.com/pinax/pinax-projects/tree/teams-wiki) of [pinax-projects](https://github.com/pinax/pinax-projects/).
 
 ##### Prerequisites
 
