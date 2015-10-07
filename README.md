@@ -1,4 +1,5 @@
-Pinax Project Team Wiki
+Pinax Project Teams
+========================
 
 [![Join us on Slack](http://slack.pinaxproject.com/badge.svg)](http://slack.pinaxproject.com/)
 
