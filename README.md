@@ -65,7 +65,7 @@ if and when you are editing `js` or `less` files.
 Documentation
 --------------
 
-The Pinax documentation is available at http://pinaxproject.com/pinax/.
+The pinax-project-teams documentation is currently under construction. If you would like to help us write documentation, please join our Slack channel and let us know! The Pinax documentation is available at http://pinaxproject.com/pinax/.
 
 
 Code of Conduct
